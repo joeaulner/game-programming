@@ -6,7 +6,7 @@ public class FrameRate {
     private long delta;
     private int frameCount;
 
-    public void initialize() {
+    public FrameRate() {
         lastTime = System.currentTimeMillis();
         frameRate = "FPS 0";
     }

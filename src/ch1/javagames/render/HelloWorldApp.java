@@ -20,7 +20,6 @@ public class HelloWorldApp extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setTitle("Hello World!");
         pack();
-        frameRate.initialize();
         setVisible(true);
     }
 
