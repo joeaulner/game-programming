@@ -1,4 +1,4 @@
-package ch1.render;
+package javagames.render;
 
 import java.awt.event.*;
 import javax.swing.*;

@@ -1,6 +1,6 @@
-package ch2.input;
+package javagames.input;
 
-import ch2.util.KeyboardInput;
+import javagames.util.KeyboardInput;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;

@@ -1,11 +1,11 @@
-package ch1.render;
+package javagames.render;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
 import javax.swing.*;
 
-import ch1.util.FrameRate;
+import javagames.util.FrameRate;
 
 public class ActiveRenderingExample extends JFrame implements Runnable {
     private FrameRate frameRate;
