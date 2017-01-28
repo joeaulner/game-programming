@@ -1,4 +1,4 @@
-package ch1.javagames.util;
+package ch1.util;
 
 public class FrameRate {
     private String frameRate;

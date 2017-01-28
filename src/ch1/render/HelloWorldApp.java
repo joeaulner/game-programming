@@ -1,8 +1,9 @@
-package ch1.javagames.render;
+package ch1.render;
 
 import java.awt.*;
 import javax.swing.*;
-import ch1.javagames.util.*;
+
+import ch1.util.FrameRate;
 
 public class HelloWorldApp extends JFrame {
     private FrameRate frameRate;

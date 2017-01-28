@@ -1,6 +1,6 @@
-package ch1.javagames.render;
+package ch1.render;
 
-import ch1.javagames.util.FrameRate;
+import ch1.util.FrameRate;
 
 import javax.swing.*;
 import java.awt.*;
