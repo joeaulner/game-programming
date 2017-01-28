@@ -1,6 +1,6 @@
 package ch2.input;
 
-import ch2.util.SimpleKeyboardInput;
+import ch2.util.KeyboardInput;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
@@ -10,11 +10,10 @@ import java.awt.event.WindowEvent;
 public class SimpleKeyboardExample extends JFrame implements Runnable {
     private volatile boolean running;
     private Thread gameThread;
-    private SimpleKeyboardInput keys;
-    private boolean space;
+    private KeyboardInput keys;
 
     private SimpleKeyboardExample() {
-        keys = new SimpleKeyboardInput();
+        keys = new KeyboardInput();
     }
 
     private void createAndShowGUI() {
@@ -35,13 +34,10 @@ public class SimpleKeyboardExample extends JFrame implements Runnable {
     }
 
     private void gameLoop() {
-        if (keys.keyDown(KeyEvent.VK_SPACE)) {
-            if (!space) {
-                System.out.println("VK_SPACE");
-            }
-            space = true;
-        } else {
-            space = false;
+        keys.poll();
+
+        if (keys.keyDownOnce(KeyEvent.VK_SPACE)) {
+            System.out.println("VK_SPACE");
         }
         if (keys.keyDown(KeyEvent.VK_UP)) {
             System.out.println("VK_UP");
