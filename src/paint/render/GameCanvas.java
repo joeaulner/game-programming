@@ -30,14 +30,14 @@ public class GameCanvas extends Canvas {
         bs = getBufferStrategy();
     }
 
-    public void renderFrame(GameState state) {
+    public void renderFrame() {
         do {
             do {
                 Graphics g = null;
                 try {
                     g = bs.getDrawGraphics();
                     g.clearRect(0, 0, getWidth(), getHeight());
-                    render(g, state);
+                    render(g);
                 } finally {
                     if (g != null) {
                         g.dispose();
@@ -48,7 +48,20 @@ public class GameCanvas extends Canvas {
         } while (bs.contentsLost());
     }
 
-    private void render(Graphics g, GameState state) {
+    private void render(Graphics g) {
+        GameState state = GameState.getInstance();
+
+        // display mode
+        String mode;
+        switch (state.getMode()) {
+            case FREE_DRAW:
+                mode = "free draw";
+                break;
+            default:
+                mode = "undefined mode";
+        }
+        g.drawString("Current mode: " + mode, 20, 20);
+
         // draw lines
         ArrayList<ColorPoint> points = state.getPoints();
         for (int i = 0; i < points.size() - 1; ++i) {
@@ -62,7 +75,7 @@ public class GameCanvas extends Canvas {
         }
 
         // draw cursor
-        g.setColor(Color.BLACK);
+        g.setColor(state.getColor());
         Point p = state.getMousePos();
         g.drawLine(p.x - 10, p.y, p.x + 10, p.y);
         g.drawLine(p.x, p.y - 10, p.x, p.y + 10);

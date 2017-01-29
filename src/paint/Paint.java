@@ -18,11 +18,6 @@ public class Paint extends JFrame implements Runnable {
     private MouseInput mouse;
 
     private GameCanvas canvas;
-    private GameState state;
-
-    private Paint() {
-        state = new GameState();
-    }
 
     public void run() {
         running = true;
@@ -32,8 +27,8 @@ public class Paint extends JFrame implements Runnable {
     }
 
     private void gameLoop() {
-        state.processInput(keyboard, mouse);
-        canvas.renderFrame(state);
+        GameState.getInstance().processInput(keyboard, mouse);
+        canvas.renderFrame();
         try {
             Thread.sleep(17L);
         } catch (InterruptedException ex) {
