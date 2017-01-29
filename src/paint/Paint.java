@@ -1,6 +1,7 @@
 package paint;
 
-import javagames.util.KeyboardInput;
+import paint.util.KeyboardInput;
+import paint.logic.GameState;
 import paint.render.GameCanvas;
 import paint.util.MouseInput;
 
@@ -17,6 +18,11 @@ public class Paint extends JFrame implements Runnable {
     private MouseInput mouse;
 
     private GameCanvas canvas;
+    private GameState state;
+
+    private Paint() {
+        state = new GameState();
+    }
 
     public void run() {
         running = true;
@@ -26,10 +32,10 @@ public class Paint extends JFrame implements Runnable {
     }
 
     private void gameLoop() {
-        System.out.println("game loop here");
-        canvas.render();
+        state.processInput(keyboard, mouse);
+        canvas.renderFrame(state);
         try {
-            Thread.sleep(10L);
+            Thread.sleep(17L);
         } catch (InterruptedException ex) {
             // ignore thread exceptions when sleeping
         }
@@ -42,6 +48,16 @@ public class Paint extends JFrame implements Runnable {
         setTitle("Java Paint");
         setIgnoreRepaint(true);
         pack();
+
+        // add key listeners
+        keyboard = new KeyboardInput();
+        canvas.addKeyListener(keyboard);
+
+        // add mouse listeners
+        mouse = new MouseInput();
+        canvas.addMouseListener(mouse);
+        canvas.addMouseMotionListener(mouse);
+        canvas.addMouseWheelListener(mouse);
 
         setVisible(true);
         canvas.createBufferStrategy();

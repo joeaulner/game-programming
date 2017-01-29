@@ -3,8 +3,7 @@ package paint.util;
 import java.awt.*;
 import java.awt.event.*;
 
-public class MouseInput
-        implements MouseListener, MouseMotionListener, MouseWheelListener {
+public class MouseInput extends MouseAdapter {
 
     private static final int BUTTON_COUNT = 3;
     private Point mousePos;
