@@ -8,6 +8,7 @@ import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
 
 import static paint.logic.DrawMode.*;
+import static paint.logic.MenuItem.*;
 
 public class GameCanvas extends Canvas {
 
@@ -116,17 +117,6 @@ public class GameCanvas extends Canvas {
     private void render(Graphics g) {
         GameState state = GameState.getInstance();
 
-        // display mode
-        String mode;
-        switch (state.getMode()) {
-            case FREE_DRAW:
-                mode = "free draw";
-                break;
-            default:
-                mode = "undefined mode";
-        }
-        g.drawString("Current mode: " + mode, 20, 20);
-
         // draw lines
         ArrayList<ColorPoint> points = state.getPoints();
         for (int i = 0; i < points.size() - 1; ++i) {
@@ -143,10 +133,10 @@ public class GameCanvas extends Canvas {
         for (MenuItem menuItem : menuItems) {
             if (menuItem.color == null) {
                 g.setColor(Color.BLACK);
-                g.drawRect(menuItem.x, menuItem.y, MenuItem.MENU_ITEM_WIDTH, MenuItem.MENU_ITEM_HEIGHT);
+                g.drawRect(menuItem.x, menuItem.y, MENU_ITEM_WIDTH, MENU_ITEM_HEIGHT);
             } else {
                 g.setColor(menuItem.color);
-                g.fillRect(menuItem.x, menuItem.y, MenuItem.MENU_ITEM_WIDTH, MenuItem.MENU_ITEM_HEIGHT);
+                g.fillRect(menuItem.x, menuItem.y, MENU_ITEM_WIDTH, MENU_ITEM_HEIGHT);
             }
         }
 

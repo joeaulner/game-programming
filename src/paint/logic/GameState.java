@@ -67,10 +67,6 @@ final public class GameState {
 
         mousePos = mouse.getPosition();
 
-        if (keyboard.keyDownOnce(MouseEvent.BUTTON1)) {
-            drawingLine = true;
-        }
-
         for (MenuItem menuItem : menuItems) {
             if (mouse.buttonDownOnce(MouseEvent.BUTTON1) &&
                     mousePos.x >= menuItem.x && mousePos.x <= menuItem.x + MenuItem.MENU_ITEM_WIDTH &&
@@ -83,11 +79,18 @@ final public class GameState {
         }
 
         switch (mode) {
+            case LINE:
+                processLineInput(mouse);
+                break;
+            case RECTANGLE:
+                processRectangleInput(mouse);
+                break;
+            case POLY_LINE:
+                processPolyLineInput(mouse);
+                break;
             case FREE_DRAW:
                 processFreeDrawInput(mouse);
                 break;
-            default:
-                System.out.println("Undefined draw mode");
         }
 
         if (keyboard.keyDownOnce(KeyEvent.VK_C)) {
@@ -95,10 +98,50 @@ final public class GameState {
         }
     }
 
-    private void processFreeDrawInput(MouseInput mouse) {
-        if (mouse.buttonDown(MouseEvent.BUTTON1)) {
+    private void processLineInput(MouseInput mouse) {
+        if (mouse.buttonDownOnce(MouseEvent.BUTTON1)) {
             points.add(new ColorPoint(mouse.getPosition(), color));
-        } else {
+            drawingLine = !drawingLine;
+            if (!drawingLine) {
+                points.add(null);
+            }
+        }
+    }
+
+    private void processRectangleInput(MouseInput mouse) {
+        if (mouse.buttonDownOnce(MouseEvent.BUTTON1)) {
+            if (drawingLine) {
+                Point pos = mouse.getPosition();
+                ColorPoint last = points.get(points.size() - 1);
+
+                points.add(new ColorPoint(new Point(last.x, pos.y), color));
+                points.add(new ColorPoint(new Point(pos.x, pos.y), color));
+                points.add(new ColorPoint(new Point(pos.x, last.y), color));
+                points.add(new ColorPoint(new Point(last.x, last.y), color));
+                points.add(null);
+            } else {
+                points.add(new ColorPoint(mouse.getPosition(), color));
+            }
+            drawingLine = !drawingLine;
+        }
+    }
+
+    private void processPolyLineInput(MouseInput mouse) {
+        if (mouse.buttonDownOnce(MouseEvent.BUTTON1)) {
+            points.add(new ColorPoint(mouse.getPosition(), color));
+        } else if (mouse.buttonDownOnce(MouseEvent.BUTTON3)) {
+            points.add(null);
+        }
+        drawingLine = !drawingLine;
+    }
+
+    private void processFreeDrawInput(MouseInput mouse) {
+        if (mouse.buttonDownOnce(MouseEvent.BUTTON1)) {
+            points.add(new ColorPoint(mouse.getPosition(), color));
+            drawingLine = true;
+        } else if (mouse.buttonDown(MouseEvent.BUTTON1) && drawingLine) {
+            points.add(new ColorPoint(mouse.getPosition(), color));
+        } else if (drawingLine) {
             points.add(null);
             drawingLine = false;
         }
