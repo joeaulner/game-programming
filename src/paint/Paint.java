@@ -57,6 +57,7 @@ public class Paint extends JFrame implements Runnable {
         setVisible(true);
         canvas.createBufferStrategy();
         canvas.requestFocus();
+        canvas.overrideCursor();
 
         gameThread = new Thread(this);
         gameThread.start();

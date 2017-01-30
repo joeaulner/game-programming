@@ -15,19 +15,20 @@ public class GameCanvas extends Canvas {
         setSize(1280, 720);
         setBackground(Color.WHITE);
         setIgnoreRepaint(true);
+    }
 
-        // hide cursor
+    public void createBufferStrategy() {
+        createBufferStrategy(2);
+        bs = getBufferStrategy();
+    }
+
+    public void overrideCursor() {
         Toolkit tk = Toolkit.getDefaultToolkit();
         Image image = tk.createImage("");
         Point point = new Point(0, 0);
         String name = "Empty Cursor";
         Cursor cursor = tk.createCustomCursor(image, point, name);
         setCursor(cursor);
-    }
-
-    public void createBufferStrategy() {
-        createBufferStrategy(2);
-        bs = getBufferStrategy();
     }
 
     public void renderFrame() {
