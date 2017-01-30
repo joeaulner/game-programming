@@ -44,6 +44,10 @@ final public class GameState {
         return mousePos;
     }
 
+    public boolean getDrawingLine() {
+        return drawingLine;
+    }
+
     public Color getColor() {
         return color;
     }
@@ -129,10 +133,11 @@ final public class GameState {
     private void processPolyLineInput(MouseInput mouse) {
         if (mouse.buttonDownOnce(MouseEvent.BUTTON1)) {
             points.add(new ColorPoint(mouse.getPosition(), color));
+            drawingLine = true;
         } else if (mouse.buttonDownOnce(MouseEvent.BUTTON3)) {
             points.add(null);
+            drawingLine = false;
         }
-        drawingLine = !drawingLine;
     }
 
     private void processFreeDrawInput(MouseInput mouse) {
