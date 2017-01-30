@@ -8,31 +8,27 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
+import static paint.logic.DrawMode.*;
+
 final public class GameState {
 
-    private ArrayList<ColorPoint> points = new ArrayList<>();
+    private ArrayList<ColorPoint> points;
     private boolean drawingLine;
     private Point mousePos;
     private Color color;
-
-    final Color[] COLORS = {
-            Color.BLUE,
-            Color.RED,
-            Color.GREEN,
-            Color.BLACK
-    };
-    private int colorIndex;
-
-    public enum DrawMode {
-        LINE, RECTANGLE, POLY_LINE, FREE_DRAW
-    }
     private DrawMode mode;
 
+    public static final Color[] COLORS = { Color.BLUE, Color.RED, Color.GREEN, Color.BLACK };
+    private int colorIndex;
+
     private static GameState instance;
+
     private GameState() {
+        points = new ArrayList<>();
         colorIndex = 0;
-        mode = DrawMode.FREE_DRAW;
+        mode = FREE_DRAW;
     }
+
     public static GameState getInstance() {
         if (instance == null) {
             instance = new GameState();
@@ -51,12 +47,18 @@ final public class GameState {
     public Color getColor() {
         return color;
     }
+    public void setColorIndex(int colorIndex) {
+        this.colorIndex = colorIndex;
+    }
 
     public DrawMode getMode() {
         return mode;
     }
+    public void setMode(DrawMode mode) {
+        this.mode = mode;
+    }
 
-    public void processInput(KeyboardInput keyboard, MouseInput mouse) {
+    public void processInput(KeyboardInput keyboard, MouseInput mouse, ArrayList<MenuItem> menuItems) {
         keyboard.poll();
         mouse.poll();
 
@@ -67,6 +69,17 @@ final public class GameState {
 
         if (keyboard.keyDownOnce(MouseEvent.BUTTON1)) {
             drawingLine = true;
+        }
+
+        for (MenuItem menuItem : menuItems) {
+            if (mouse.buttonDownOnce(MouseEvent.BUTTON1) &&
+                    mousePos.x >= menuItem.x && mousePos.x <= menuItem.x + MenuItem.MENU_ITEM_WIDTH &&
+                    mousePos.y >= menuItem.y && mousePos.y <= menuItem.y + MenuItem.MENU_ITEM_HEIGHT) {
+                if (!drawingLine) {
+                    menuItem.onClicked();
+                }
+                return;
+            }
         }
 
         switch (mode) {

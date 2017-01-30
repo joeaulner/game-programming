@@ -27,7 +27,7 @@ public class Paint extends JFrame implements Runnable {
     }
 
     private void gameLoop() {
-        GameState.getInstance().processInput(keyboard, mouse);
+        GameState.getInstance().processInput(keyboard, mouse, canvas.getMenuItems());
         canvas.renderFrame();
         try {
             Thread.sleep(17L);
