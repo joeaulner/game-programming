@@ -4,19 +4,18 @@ import paint.logic.*;
 import paint.logic.MenuItem;
 
 import java.awt.*;
-import java.awt.event.FocusAdapter;
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
 
 import static paint.logic.DrawMode.*;
 import static paint.logic.MenuItem.*;
 
-public class GameCanvas extends Canvas {
+public class PaintCanvas extends Canvas {
 
     private BufferStrategy bs;
     private ArrayList<MenuItem> menuItems;
 
-    public GameCanvas() {
+    public PaintCanvas() {
         setSize(1280, 720);
         setBackground(Color.WHITE);
         setIgnoreRepaint(true);

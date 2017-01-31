@@ -2,7 +2,7 @@ package paint;
 
 import paint.util.KeyboardInput;
 import paint.logic.GameState;
-import paint.render.GameCanvas;
+import paint.render.PaintCanvas;
 import paint.util.MouseInput;
 
 import javax.swing.*;
@@ -17,7 +17,7 @@ public class Paint extends JFrame implements Runnable {
     private KeyboardInput keyboard;
     private MouseInput mouse;
 
-    private GameCanvas canvas;
+    private PaintCanvas canvas;
 
     public void run() {
         running = true;
@@ -37,7 +37,7 @@ public class Paint extends JFrame implements Runnable {
     }
 
     private void createAndShowGUI() {
-        canvas = new GameCanvas();
+        canvas = new PaintCanvas();
 
         getContentPane().add(canvas);
         setTitle("Java Paint");
