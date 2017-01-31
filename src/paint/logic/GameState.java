@@ -21,7 +21,7 @@ final public class GameState {
     public static final Color[] COLORS = { Color.BLUE, Color.RED, Color.GREEN, Color.BLACK };
     private int colorIndex;
 
-    private static GameState instance;
+    private static GameState instance = new GameState();
 
     private GameState() {
         points = new ArrayList<>();
@@ -30,9 +30,6 @@ final public class GameState {
     }
 
     public static GameState getInstance() {
-        if (instance == null) {
-            instance = new GameState();
-        }
         return instance;
     }
 
