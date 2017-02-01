@@ -31,7 +31,7 @@ public class Paint extends JFrame implements Runnable {
         canvas.overrideCursor();
         canvas.renderFrame();
         try {
-            Thread.sleep(16L);
+            Thread.sleep(10L);
         } catch (InterruptedException ex) {
             // ignore thread exceptions when sleeping
         }
@@ -45,7 +45,7 @@ public class Paint extends JFrame implements Runnable {
         setIgnoreRepaint(true);
         pack();
 
-        // add key listeners
+        // add keyboard listeners
         keyboard = new KeyboardInput();
         canvas.addKeyListener(keyboard);
 

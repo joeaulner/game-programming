@@ -10,9 +10,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
-import static paint.logic.MenuItem.MENU_ITEM_HEIGHT;
-import static paint.logic.MenuItem.MENU_ITEM_WIDTH;
-
 final public class GameState {
 
     private ArrayList<DrawShape> shapes;
@@ -28,10 +25,10 @@ final public class GameState {
 
     private GameState() {
         tools = new ArrayList<>();
-        tools.add(new LineTool());
-        tools.add(new RectangleTool());
-        tools.add(new PolyLineTool());
-        tools.add(new FreeDrawTool());
+        tools.add(new LineTool(this));
+        tools.add(new RectangleTool(this));
+        tools.add(new PolyLineTool(this));
+        tools.add(new FreeDrawTool(this));
 
         shapes = new ArrayList<>();
         colorIndex = 0;
@@ -53,30 +50,31 @@ final public class GameState {
         this.colorIndex = colorIndex;
     }
 
-    public void setActiveTool(int toolIndex) {
-        this.toolIndex = toolIndex;
-    }
-
     public void addShape(DrawShape shape) {
         shapes.add(shape);
-    }
-
-    public ArrayList<DrawTool> getTools() {
-        return tools;
-    }
-
-    public DrawTool getActiveTool() {
-        return tools.get(toolIndex);
     }
 
     public ArrayList<DrawShape> getShapes() {
         return shapes;
     }
 
-    public void processInput(KeyboardInput keyboard, MouseInput mouse, ArrayList<MenuItem> menuItems) {
+    public ArrayList<DrawTool> getTools() {
+        return tools;
+    }
+
+    public void setActiveTool(int toolIndex) {
+        this.toolIndex = toolIndex;
+    }
+
+    public DrawTool getActiveTool() {
+        return tools.get(toolIndex);
+    }
+
+    public void processInput(KeyboardInput keyboard, MouseInput mouse, ArrayList<paint.render.MenuItem> menuItems) {
         keyboard.poll();
         mouse.poll();
 
+        // cycle through colors/tools on scroll up/down, respectively
         int notches = mouse.getNotches();
         if (notches > 0 && !tools.get(toolIndex).isDrawing()) {
             toolIndex = (toolIndex + 1) % tools.size();
@@ -84,17 +82,12 @@ final public class GameState {
             colorIndex++;
         }
 
+        // if a single click event falls on a menu item and drawing is not active, set the correct color/tool
         mousePos = mouse.getPosition();
-
-        for (MenuItem menuItem : menuItems) {
-            Rectangle rectangle = new Rectangle(menuItem.x, menuItem.y, MENU_ITEM_WIDTH, MENU_ITEM_HEIGHT);
-            if (mouse.buttonDownOnce(MouseEvent.BUTTON1) && rectangle.contains(mousePos.x, mousePos.y)) {
+        for (paint.render.MenuItem menuItem : menuItems) {
+            if (mouse.buttonDownOnce(MouseEvent.BUTTON1) && menuItem.contains(mousePos.x, mousePos.y)) {
                 if (!tools.get(toolIndex).isDrawing()) {
-                    if (menuItem.tool == null) {
-                        menuItem.setColor();
-                    } else {
-                        menuItem.setActiveTool();
-                    }
+                    menuItem.onSelected();
                 }
                 return;
             }
@@ -102,6 +95,7 @@ final public class GameState {
 
         tools.get(toolIndex).processInput(mouse);
 
+        // clear all drawn shapes on C keystroke
         if (keyboard.keyDownOnce(KeyEvent.VK_C)) {
             shapes.clear();
         }

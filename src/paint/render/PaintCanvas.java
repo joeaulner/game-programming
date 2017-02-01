@@ -1,7 +1,6 @@
 package paint.render;
 
 import paint.logic.*;
-import paint.logic.MenuItem;
 import paint.logic.shape.DrawShape;
 import paint.logic.tool.DrawTool;
 
@@ -9,7 +8,7 @@ import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
 
-import static paint.logic.MenuItem.*;
+import static paint.render.MenuItem.*;
 
 public class PaintCanvas extends Canvas {
 
@@ -22,7 +21,7 @@ public class PaintCanvas extends Canvas {
         setIgnoreRepaint(true);
 
         menuItems = new ArrayList<>();
-        addMenuItems();
+        initMenuItems();
     }
 
     public void createBufferStrategy() {
@@ -43,18 +42,19 @@ public class PaintCanvas extends Canvas {
         return menuItems;
     }
 
-    private void addMenuItems() {
+    private void initMenuItems() {
         final GameState state = GameState.getInstance();
         int y = 10;
+        int yOffset = 50;
 
         for (final DrawTool tool : state.getTools()) {
             menuItems.add(new MenuItem(9, y, tool));
-            y += 50;
+            y += yOffset;
         }
 
         for (int i = 0; i < 4; i++) {
             menuItems.add(new MenuItem(9, y, i));
-            y += 50;
+            y += yOffset;
         }
     }
 

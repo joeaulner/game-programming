@@ -1,31 +1,37 @@
 package paint.logic.tool;
 
 import paint.logic.*;
+import paint.util.FileHelper;
 import paint.util.MouseInput;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 
-import static paint.logic.MenuItem.MENU_ITEM_HEIGHT;
-import static paint.logic.MenuItem.MENU_ITEM_WIDTH;
+import static paint.render.MenuItem.MENU_ITEM_HEIGHT;
+import static paint.render.MenuItem.MENU_ITEM_WIDTH;
 
 public abstract class DrawTool {
 
+    GameState state;
+
+    private BufferedImage image;
     protected Point start;
-    protected BufferedImage image;
+
+    DrawTool(GameState state, String filename) {
+        this.state = state;
+        image = new FileHelper().getImage(filename);
+    }
 
     public boolean isDrawing() {
         return start != null;
     }
 
     public void setActive() {
-        GameState state = GameState.getInstance();
         state.setActiveTool(state.getTools().indexOf(this));
     }
 
     private boolean isActive() {
-        GameState state = GameState.getInstance();
         return this == state.getActiveTool();
     }
 

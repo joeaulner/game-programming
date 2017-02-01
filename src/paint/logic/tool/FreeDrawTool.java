@@ -2,7 +2,6 @@ package paint.logic.tool;
 
 import paint.logic.GameState;
 import paint.logic.shape.Line;
-import paint.util.FileHelper;
 import paint.util.MouseInput;
 
 import java.awt.*;
@@ -10,14 +9,13 @@ import java.awt.event.MouseEvent;
 
 public class FreeDrawTool extends DrawTool {
 
-    public FreeDrawTool() {
-        image = new FileHelper().getImage("free-draw.png");
+    public FreeDrawTool(GameState state) {
+        super(state, "free-draw.png");
     }
 
     @Override
     public void processInput(MouseInput mouse) {
         if (mouse.buttonDown(MouseEvent.BUTTON1)) {
-            GameState state = GameState.getInstance();
             Point mousePos = state.getMousePos();
 
             if (start == null) {

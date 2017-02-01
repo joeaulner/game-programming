@@ -2,7 +2,6 @@ package paint.logic.tool;
 
 import paint.logic.GameState;
 import paint.logic.shape.Line;
-import paint.util.FileHelper;
 import paint.util.MouseInput;
 
 import java.awt.*;
@@ -10,8 +9,8 @@ import java.awt.event.MouseEvent;
 
 public class PolyLineTool extends LineTool {
 
-    public PolyLineTool() {
-        image = new FileHelper().getImage("poly-line.png");
+    public PolyLineTool(GameState state) {
+        super(state, "poly-line.png");
     }
 
     @Override
@@ -20,7 +19,6 @@ public class PolyLineTool extends LineTool {
             if (start == null) {
                 start = mouse.getPosition();
             } else {
-                GameState state = GameState.getInstance();
                 state.addShape(new Line(start, mouse.getPosition(), state.getColor()));
                 start = mouse.getPosition();
             }

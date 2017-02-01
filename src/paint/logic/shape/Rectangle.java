@@ -8,7 +8,6 @@ public class Rectangle extends DrawShape {
     private int y;
     private int w;
     private int h;
-    private Color color;
 
     public Rectangle(int x, int y, int w, int h, Color color) {
         this.x = x;

@@ -6,7 +6,6 @@ public class Line extends DrawShape {
 
     private Point p1;
     private Point p2;
-    private Color color;
 
     public Line(Point p1, Point p2, Color color) {
         this.p1 = p1;

@@ -2,7 +2,6 @@ package paint.logic.tool;
 
 import paint.logic.GameState;
 import paint.logic.shape.Rectangle;
-import paint.util.FileHelper;
 import paint.util.MouseInput;
 
 import java.awt.*;
@@ -10,15 +9,14 @@ import java.awt.event.MouseEvent;
 
 public class RectangleTool extends DrawTool {
 
-    public RectangleTool() {
-        image = new FileHelper().getImage("rectangle.png");
+    public RectangleTool(GameState state) {
+        super(state, "rectangle.png");
     }
 
     @Override
     public void processInput(MouseInput mouse) {
         if (!mouse.buttonDownOnce(MouseEvent.BUTTON1)) return;
 
-        GameState state = GameState.getInstance();
         Point pos = state.getMousePos();
         if (start == null) {
             start = pos;
@@ -36,7 +34,6 @@ public class RectangleTool extends DrawTool {
     public void renderDrawPreview(Graphics g) {
         if (start == null) return;
 
-        GameState state = GameState.getInstance();
         Point pos = state.getMousePos();
         int x = Math.min(start.x, pos.x);
         int y = Math.min(start.y, pos.y);
