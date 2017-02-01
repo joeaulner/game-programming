@@ -17,7 +17,6 @@ final public class GameState {
 
     private ArrayList<DrawShape> shapes;
     private Point mousePos;
-    private Color color;
 
     private ArrayList<DrawTool> tools;
     private int toolIndex;
@@ -47,7 +46,7 @@ final public class GameState {
     }
 
     public Color getColor() {
-        return color;
+        return COLORS[colorIndex % COLORS.length];
     }
 
     public void setColorIndex(int colorIndex) {
@@ -83,7 +82,6 @@ final public class GameState {
             toolIndex = (toolIndex + 1) % tools.size();
         } else if (notches < 0) {
             colorIndex++;
-            color = COLORS[colorIndex % COLORS.length];
         }
 
         mousePos = mouse.getPosition();

@@ -31,7 +31,7 @@ public class Paint extends JFrame implements Runnable {
         canvas.overrideCursor();
         canvas.renderFrame();
         try {
-            Thread.sleep(17L);
+            Thread.sleep(16L);
         } catch (InterruptedException ex) {
             // ignore thread exceptions when sleeping
         }
