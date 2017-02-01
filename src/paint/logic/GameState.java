@@ -78,8 +78,13 @@ final public class GameState {
         keyboard.poll();
         mouse.poll();
 
-        colorIndex += mouse.getNotches();
-        color = COLORS[Math.abs(colorIndex % COLORS.length)];
+        int notches = mouse.getNotches();
+        if (notches > 0 && !tools.get(toolIndex).isDrawing()) {
+            toolIndex = (toolIndex + 1) % tools.size();
+        } else if (notches < 0) {
+            colorIndex++;
+            color = COLORS[colorIndex % COLORS.length];
+        }
 
         mousePos = mouse.getPosition();
 
