@@ -4,7 +4,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
-public class ImageHelper {
+public class FileHelper {
 
     public BufferedImage getImage(String filename) {
         BufferedImage image = null;

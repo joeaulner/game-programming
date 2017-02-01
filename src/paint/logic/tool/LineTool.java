@@ -2,7 +2,7 @@ package paint.logic.tool;
 
 import paint.logic.GameState;
 import paint.logic.shape.Line;
-import paint.util.ImageHelper;
+import paint.util.FileHelper;
 import paint.util.MouseInput;
 
 import java.awt.*;
@@ -11,7 +11,7 @@ import java.awt.event.MouseEvent;
 public class LineTool extends DrawTool {
 
     public LineTool() {
-        image = new ImageHelper().getImage("line.png");
+        image = new FileHelper().getImage("line.png");
     }
 
     @Override

@@ -2,7 +2,7 @@ package paint.logic.tool;
 
 import paint.logic.GameState;
 import paint.logic.shape.Rectangle;
-import paint.util.ImageHelper;
+import paint.util.FileHelper;
 import paint.util.MouseInput;
 
 import java.awt.*;
@@ -11,7 +11,7 @@ import java.awt.event.MouseEvent;
 public class RectangleTool extends DrawTool {
 
     public RectangleTool() {
-        image = new ImageHelper().getImage("rectangle.png");
+        image = new FileHelper().getImage("rectangle.png");
     }
 
     @Override

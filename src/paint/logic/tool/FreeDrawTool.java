@@ -2,7 +2,7 @@ package paint.logic.tool;
 
 import paint.logic.GameState;
 import paint.logic.shape.Line;
-import paint.util.ImageHelper;
+import paint.util.FileHelper;
 import paint.util.MouseInput;
 
 import java.awt.*;
@@ -11,7 +11,7 @@ import java.awt.event.MouseEvent;
 public class FreeDrawTool extends DrawTool {
 
     public FreeDrawTool() {
-        image = new ImageHelper().getImage("free-draw.png");
+        image = new FileHelper().getImage("free-draw.png");
     }
 
     @Override
