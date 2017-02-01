@@ -1,5 +1,7 @@
 package paint.logic;
 
+import paint.logic.shape.DrawShape;
+import paint.logic.tool.*;
 import paint.util.KeyboardInput;
 import paint.util.MouseInput;
 
@@ -8,55 +10,68 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
-import static paint.logic.DrawMode.*;
+import static paint.logic.MenuItem.MENU_ITEM_HEIGHT;
+import static paint.logic.MenuItem.MENU_ITEM_WIDTH;
 
 final public class GameState {
 
-    private ArrayList<ColorPoint> points;
-    private boolean drawingLine;
+    private ArrayList<DrawShape> shapes;
     private Point mousePos;
     private Color color;
-    private DrawMode mode;
 
-    public static final Color[] COLORS = { Color.BLUE, Color.RED, Color.GREEN, Color.BLACK };
+    private ArrayList<DrawTool> tools;
+    private int toolIndex;
+
+    public static final Color[] COLORS = {Color.BLUE, Color.RED, Color.GREEN, Color.BLACK};
     private int colorIndex;
 
     private static GameState instance = new GameState();
 
     private GameState() {
-        points = new ArrayList<>();
+        tools = new ArrayList<>();
+        tools.add(new LineTool());
+        tools.add(new RectangleTool());
+        tools.add(new PolyLineTool());
+        tools.add(new FreeDrawTool());
+
+        shapes = new ArrayList<>();
         colorIndex = 0;
-        mode = FREE_DRAW;
     }
 
     public static GameState getInstance() {
         return instance;
     }
 
-    public ArrayList<ColorPoint> getPoints() {
-        return points;
-    }
-
     public Point getMousePos() {
         return mousePos;
-    }
-
-    public boolean getDrawingLine() {
-        return drawingLine;
     }
 
     public Color getColor() {
         return color;
     }
+
     public void setColorIndex(int colorIndex) {
         this.colorIndex = colorIndex;
     }
 
-    public DrawMode getMode() {
-        return mode;
+    public void setActiveTool(int toolIndex) {
+        this.toolIndex = toolIndex;
     }
-    public void setMode(DrawMode mode) {
-        this.mode = mode;
+
+    public void addShape(DrawShape shape) {
+        shapes.add(shape);
+    }
+
+    public ArrayList<DrawTool> getTools() {
+        return tools;
+    }
+
+    public DrawTool getActiveTool() {
+        return tools.get(toolIndex);
+    }
+
+    public ArrayList<DrawShape> getShapes() {
+        return shapes;
     }
 
     public void processInput(KeyboardInput keyboard, MouseInput mouse, ArrayList<MenuItem> menuItems) {
@@ -69,83 +84,23 @@ final public class GameState {
         mousePos = mouse.getPosition();
 
         for (MenuItem menuItem : menuItems) {
-            if (mouse.buttonDownOnce(MouseEvent.BUTTON1) &&
-                    mousePos.x >= menuItem.x && mousePos.x <= menuItem.x + MenuItem.MENU_ITEM_WIDTH &&
-                    mousePos.y >= menuItem.y && mousePos.y <= menuItem.y + MenuItem.MENU_ITEM_HEIGHT) {
-                if (!drawingLine) {
-                    menuItem.onClicked();
+            Rectangle rectangle = new Rectangle(menuItem.x, menuItem.y, MENU_ITEM_WIDTH, MENU_ITEM_HEIGHT);
+            if (mouse.buttonDownOnce(MouseEvent.BUTTON1) && rectangle.contains(mousePos.x, mousePos.y)) {
+                if (!tools.get(toolIndex).isDrawing()) {
+                    if (menuItem.tool == null) {
+                        menuItem.setColor();
+                    } else {
+                        menuItem.setActiveTool();
+                    }
                 }
                 return;
             }
         }
 
-        switch (mode) {
-            case LINE:
-                processLineInput(mouse);
-                break;
-            case RECTANGLE:
-                processRectangleInput(mouse);
-                break;
-            case POLY_LINE:
-                processPolyLineInput(mouse);
-                break;
-            case FREE_DRAW:
-                processFreeDrawInput(mouse);
-                break;
-        }
+        tools.get(toolIndex).processInput(mouse);
 
         if (keyboard.keyDownOnce(KeyEvent.VK_C)) {
-            points.clear();
-        }
-    }
-
-    private void processLineInput(MouseInput mouse) {
-        if (mouse.buttonDownOnce(MouseEvent.BUTTON1)) {
-            points.add(new ColorPoint(mouse.getPosition(), color));
-            drawingLine = !drawingLine;
-            if (!drawingLine) {
-                points.add(null);
-            }
-        }
-    }
-
-    private void processRectangleInput(MouseInput mouse) {
-        if (mouse.buttonDownOnce(MouseEvent.BUTTON1)) {
-            if (drawingLine) {
-                Point pos = mouse.getPosition();
-                ColorPoint last = points.get(points.size() - 1);
-
-                points.add(new ColorPoint(new Point(last.x, pos.y), color));
-                points.add(new ColorPoint(new Point(pos.x, pos.y), color));
-                points.add(new ColorPoint(new Point(pos.x, last.y), color));
-                points.add(new ColorPoint(new Point(last.x, last.y), color));
-                points.add(null);
-            } else {
-                points.add(new ColorPoint(mouse.getPosition(), color));
-            }
-            drawingLine = !drawingLine;
-        }
-    }
-
-    private void processPolyLineInput(MouseInput mouse) {
-        if (mouse.buttonDownOnce(MouseEvent.BUTTON1)) {
-            points.add(new ColorPoint(mouse.getPosition(), color));
-            drawingLine = true;
-        } else if (mouse.buttonDownOnce(MouseEvent.BUTTON3)) {
-            points.add(null);
-            drawingLine = false;
-        }
-    }
-
-    private void processFreeDrawInput(MouseInput mouse) {
-        if (mouse.buttonDownOnce(MouseEvent.BUTTON1)) {
-            points.add(new ColorPoint(mouse.getPosition(), color));
-            drawingLine = true;
-        } else if (mouse.buttonDown(MouseEvent.BUTTON1) && drawingLine) {
-            points.add(new ColorPoint(mouse.getPosition(), color));
-        } else if (drawingLine) {
-            points.add(null);
-            drawingLine = false;
+            shapes.clear();
         }
     }
 }

@@ -1,21 +1,34 @@
 package paint.logic;
 
-import java.awt.Color;
+import paint.logic.tool.DrawTool;
 
-abstract public class MenuItem {
+public class MenuItem {
 
     public static final int MENU_ITEM_WIDTH = 40;
     public static final int MENU_ITEM_HEIGHT = 40;
 
     public int x;
     public int y;
-    public Color color;
+    public int colorIndex;
+    public DrawTool tool;
 
-    protected MenuItem(int x, int y, Color color) {
+    public MenuItem(int x, int y, int colorIndex) {
         this.x = x;
         this.y = y;
-        this.color = color;
+        this.colorIndex = colorIndex;
     }
 
-    public abstract void onClicked();
+    public MenuItem(int x, int y, DrawTool tool) {
+        this.x = x;
+        this.y = y;
+        this.tool = tool;
+    }
+
+    void setActiveTool() {
+        tool.setActive();
+    }
+
+    void setColor() {
+        GameState.getInstance().setColorIndex(colorIndex);
+    }
 }

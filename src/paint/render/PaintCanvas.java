@@ -2,12 +2,13 @@ package paint.render;
 
 import paint.logic.*;
 import paint.logic.MenuItem;
+import paint.logic.shape.DrawShape;
+import paint.logic.tool.DrawTool;
 
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
 
-import static paint.logic.DrawMode.*;
 import static paint.logic.MenuItem.*;
 
 public class PaintCanvas extends Canvas {
@@ -44,56 +45,17 @@ public class PaintCanvas extends Canvas {
 
     private void addMenuItems() {
         final GameState state = GameState.getInstance();
+        int y = 10;
 
-        menuItems.add(new MenuItem(9, 10, null) {
-            @Override
-            public void onClicked() {
-                state.setMode(LINE);
-            }
-        });
-        menuItems.add(new MenuItem(9, 60, null) {
-            @Override
-            public void onClicked() {
-                state.setMode(RECTANGLE);
-            }
-        });
-        menuItems.add(new MenuItem(9, 110, null) {
-            @Override
-            public void onClicked() {
-                state.setMode(POLY_LINE);
-            }
-        });
-        menuItems.add(new MenuItem(9, 160, null) {
-            @Override
-            public void onClicked() {
-                state.setMode(FREE_DRAW);
-            }
-        });
+        for (final DrawTool tool : state.getTools()) {
+            menuItems.add(new MenuItem(9, y, tool));
+            y += 50;
+        }
 
-        menuItems.add(new MenuItem(9, 210, GameState.COLORS[0]) {
-            @Override
-            public void onClicked() {
-                state.setColorIndex(0);
-            }
-        });
-        menuItems.add(new MenuItem(9, 260, GameState.COLORS[1]) {
-            @Override
-            public void onClicked() {
-                state.setColorIndex(1);
-            }
-        });
-        menuItems.add(new MenuItem(9, 310, GameState.COLORS[2]) {
-            @Override
-            public void onClicked() {
-                state.setColorIndex(2);
-            }
-        });
-        menuItems.add(new MenuItem(9, 360, GameState.COLORS[3]) {
-            @Override
-            public void onClicked() {
-                state.setColorIndex(3);
-            }
-        });
+        for (int i = 0; i < 4; i++) {
+            menuItems.add(new MenuItem(9, y, i));
+            y += 50;
+        }
     }
 
     public void renderFrame() {
@@ -117,19 +79,13 @@ public class PaintCanvas extends Canvas {
     private void render(Graphics g) {
         GameState state = GameState.getInstance();
 
-        // draw lines
-        ArrayList<ColorPoint> points = state.getPoints();
-        for (int i = 0; i < points.size() - 1; ++i) {
-            ColorPoint p1 = points.get(i);
-            ColorPoint p2 = points.get(i + 1);
-
-            if (p1 != null && p2 != null) {
-                g.setColor(p1.color);
-                g.drawLine(p1.x, p1.y, p2.x, p2.y);
-            }
+        // draw shapes
+        ArrayList<DrawShape> shapes = state.getShapes();
+        for (DrawShape shape : shapes) {
+            shape.render(g);
         }
 
-        drawLinePreview(state, g);
+        state.getActiveTool().renderDrawPreview(g);
 
         // draw menu container
         g.setColor(Color.WHITE);
@@ -139,12 +95,16 @@ public class PaintCanvas extends Canvas {
 
         // draw menu items
         for (MenuItem menuItem : menuItems) {
-            if (menuItem.color == null) {
-                g.setColor(Color.BLACK);
-                g.drawRect(menuItem.x, menuItem.y, MENU_ITEM_WIDTH, MENU_ITEM_HEIGHT);
-            } else {
-                g.setColor(menuItem.color);
+            if (menuItem.tool == null) {
+                g.setColor(GameState.COLORS[menuItem.colorIndex]);
                 g.fillRect(menuItem.x, menuItem.y, MENU_ITEM_WIDTH, MENU_ITEM_HEIGHT);
+
+                if (GameState.COLORS[menuItem.colorIndex] == state.getColor()) {
+                    g.setColor(Color.RED);
+                    g.drawRect(menuItem.x, menuItem.y, MENU_ITEM_WIDTH, MENU_ITEM_HEIGHT);
+                }
+            } else {
+                menuItem.tool.renderMenuItem(menuItem.x, menuItem.y, g);
             }
         }
 
@@ -153,46 +113,5 @@ public class PaintCanvas extends Canvas {
         g.setColor(state.getColor());
         g.drawLine(p.x - 10, p.y, p.x + 10, p.y);
         g.drawLine(p.x, p.y - 10, p.x, p.y + 10);
-    }
-
-    private void drawLinePreview(GameState state, Graphics g) {
-        ArrayList<ColorPoint> points = state.getPoints();
-        if (points.size() == 0) {
-            return;
-        }
-
-        ColorPoint last = points.get(points.size() - 1);
-        if (last == null || !state.getDrawingLine()) {
-            return;
-        }
-
-        Point p = state.getMousePos();
-        g.setColor(state.getColor());
-        switch (state.getMode()) {
-            case LINE:
-                g.drawLine(last.x, last.y, p.x, p.y);
-                break;
-            case RECTANGLE:
-                int x, y, w, h;
-                if (p.x < last.x) {
-                    x = p.x;
-                    w = last.x - p.x;
-                } else {
-                    x = last.x;
-                    w = p.x - last.x;
-                }
-                if (p.y < last.y) {
-                    y = p.y;
-                    h = last.y - p.y;
-                } else {
-                    y = last.y;
-                    h = p.y - last.y;
-                }
-                g.drawRect(x, y, w, h);
-                break;
-            case POLY_LINE:
-                g.drawLine(last.x, last.y, p.x, p.y);
-                break;
-        }
     }
 }
