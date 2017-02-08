@@ -45,7 +45,6 @@ public class VectorObject implements Drawable {
         while (!path.isDone()) {
             segmentType = path.currentSegment(coords);
             if (segmentType == PathIterator.SEG_MOVETO || segmentType == PathIterator.SEG_LINETO) {
-                System.out.printf("(%f, %f)\n", coords[0], coords[1]);
                 vectors.add(new Vector2f(coords[0], coords[1]));
             }
             path.next();
@@ -61,12 +60,24 @@ public class VectorObject implements Drawable {
     }
 
     public void setLocation(float x, float y) {
-        this.location = new Point.Float(x, y);
+        location = new Point.Float(x, y);
+    }
+
+    public void setLocation(Point.Float location) {
+        this.location = location;
+    }
+
+    public void setLocation(Vector2f location) {
+        this.location = new Point.Float(location.x, location.y);
     }
 
     public void setScale(float scaleX, float scaleY) {
         this.scaleX = scaleX;
         this.scaleY = scaleY;
+    }
+
+    public float getRotation() {
+        return rotation;
     }
 
     public void setRotation(float rotation) {
@@ -80,6 +91,7 @@ public class VectorObject implements Drawable {
                 .mul(Matrix3x3f.scale(scaleX, scaleY))
                 .mul(Matrix3x3f.translate(location.x, -location.y))
                 .mul(Matrix3x3f.translate(WorldCanvas.SCREEN_W / 2, WorldCanvas.SCREEN_H / 2));
+
         worldVectors.clear();
         for (Vector2f vector : vectors) {
             worldVectors.add(worldMatrix.mul(vector));

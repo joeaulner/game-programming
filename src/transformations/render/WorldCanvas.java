@@ -16,7 +16,7 @@ public class WorldCanvas extends Canvas {
         setIgnoreRepaint(true);
     }
 
-    public void overrideCursor() {
+    private void overrideCursor() {
         Toolkit tk = Toolkit.getDefaultToolkit();
         Image image = tk.createImage("");
         Point point = new Point(0, 0);
@@ -45,15 +45,9 @@ public class WorldCanvas extends Canvas {
     }
 
     public void render(Graphics g) {
-        State state = State.getInstance();
-
-        for (VectorObject vectorObject : state.getVectorObjects()) {
+        overrideCursor();
+        for (VectorObject vectorObject : State.getInstance().getVectorObjects()) {
             vectorObject.render(g);
         }
-
-        Point p = state.getMousePos();
-        g.setColor(Color.BLACK);
-        g.drawLine(p.x - 10, p.y, p.x + 10, p.y);
-        g.drawLine(p.x, p.y - 10, p.x, p.y + 10);
     }
 }

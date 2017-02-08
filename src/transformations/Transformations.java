@@ -28,10 +28,9 @@ public class Transformations extends JFrame implements Runnable {
 
     private void gameLoop() {
         State.getInstance().processInput(keyboard, mouse);
-        canvas.overrideCursor();
         canvas.renderFrame();
         try {
-            Thread.sleep(10L);
+            Thread.sleep(16L);
         } catch (InterruptedException ex) {
             // ignore thread exceptions when sleeping
         }
@@ -51,9 +50,7 @@ public class Transformations extends JFrame implements Runnable {
 
         // add mouse listeners
         mouse = new MouseInput();
-        canvas.addMouseListener(mouse);
         canvas.addMouseMotionListener(mouse);
-        canvas.addMouseWheelListener(mouse);
 
         setVisible(true);
         canvas.createBufferStrategy(2);
