@@ -1,12 +1,13 @@
 package transformations.util;
 
-import javagames.util.Vector2f;
+import transformations.util.Vector2f;
 
 public class Matrix3x3f {
 
     private float[][] m = new float[3][3];
 
     public Matrix3x3f() {
+
     }
 
     public Matrix3x3f(float[][] m) {

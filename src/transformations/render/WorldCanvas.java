@@ -7,8 +7,11 @@ import java.awt.image.BufferStrategy;
 
 public class WorldCanvas extends Canvas {
 
+    public static final int SCREEN_W = 1280;
+    public static final int SCREEN_H = 760;
+
     public WorldCanvas() {
-        setSize(1280, 720);
+        setSize(SCREEN_W, SCREEN_H);
         setBackground(Color.WHITE);
         setIgnoreRepaint(true);
     }
@@ -43,6 +46,10 @@ public class WorldCanvas extends Canvas {
 
     public void render(Graphics g) {
         State state = State.getInstance();
+
+        for (VectorObject vectorObject : state.getVectorObjects()) {
+            vectorObject.render(g);
+        }
 
         Point p = state.getMousePos();
         g.setColor(Color.BLACK);
