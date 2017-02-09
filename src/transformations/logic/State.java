@@ -12,9 +12,14 @@ import java.awt.event.KeyEvent;
 import static transformations.render.WorldCanvas.SCREEN_H;
 import static transformations.render.WorldCanvas.SCREEN_W;
 
+/**
+ * The State class is responsible for managing the state of
+ * the application. It stores the vector objects representing
+ * drawable shapes with location, rotation, and scale modifiers.
+ * It is responsible for updating these objects in response
+ * to user input.
+ */
 public class State {
-
-    private static State instance = new State();
 
     private VectorObject square;
     private float dx = 2;
@@ -26,6 +31,10 @@ public class State {
 
     private VectorObject triangle;
 
+    /**
+     * Internal constructor that initializes the game state
+     * by creating the 3 vector objects.
+     */
     private State() {
         Shape shape;
 
@@ -47,14 +56,32 @@ public class State {
         triangle = new VectorObject(shape, 0, 0, Color.GREEN);
     }
 
+    private static State instance = new State();
+
+    /**
+     * Retrieve the singleton's instance serving as the central source
+     * of game state and primary means of input processing.
+     * @return The singleton instance.
+     */
     public static State getInstance() {
         return instance;
     }
 
+    /**
+     * Retrieve all of the vector objects.
+     * @return An array containing the vector objects managed by State.
+     */
     public VectorObject[] getVectorObjects() {
         return new VectorObject[] { square, hexagon, triangle };
     }
 
+    /**
+     * Updates the game state in response to user input. The keyboard
+     * and mouse listeners are polled and the updates to each
+     * vector object are delegated to internal methods.
+     * @param keyboard The keyboard input listener.
+     * @param mouse The mouse input listener.
+     */
     public void processInput(KeyboardInput keyboard, MouseInput mouse) {
         keyboard.poll();
         mouse.poll();
@@ -64,11 +91,22 @@ public class State {
         updateTriangle(mouse);
     }
 
+    /**
+     * Updates the square vector object. The square moves in a
+     * 45 degree angle at a constant rate with each frame,
+     * changing direction when the edges of the canvas are
+     * reaches.
+     */
     private void updateSquare() {
         Point.Float location = square.getLocation();
         float x = location.x + dx;
         float y = location.y + dy;
 
+        /*
+        If the left or right edge of the canvas is passed,
+        make the square flush with the edge and change the
+        direction of delta x.
+         */
         if (x - 41 < -SCREEN_W / 2) {
             x = -SCREEN_W / 2 + 41;
             dx = -dx;
@@ -77,6 +115,11 @@ public class State {
             dx = -dx;
         }
 
+        /*
+        If the top or bottom edge of the canvas is passed,
+        make the square flush with the edge and change the
+        direction of delta y.
+         */
         if (y - 41 < -SCREEN_H / 2) {
             y = -SCREEN_H / 2 + 41;
             dy = -dy;
@@ -89,11 +132,23 @@ public class State {
         square.updateWorld();
     }
 
+    /**
+     * Updates the hexagon vector object in response to key
+     * presses. The WASD keys move the object in the direction
+     * corresponding to each key. The Q and E keys decrease and
+     * increase the object's speed of rotation, respectively.
+     * The spacebar reverses the object's direction of rotation.
+     * @param keyboard The keyboard input listener.
+     */
     private void updateHexagon(KeyboardInput keyboard) {
         Point.Float location = hexagon.getLocation();
         float x = location.x;
         float y = location.y;
 
+        /*
+        Change the object's translation in response to the
+        movement keys: WASD.
+         */
         float dt = 3;
         if (keyboard.keyDown(KeyEvent.VK_A)) {
             x -= dt;
@@ -109,6 +164,9 @@ public class State {
         }
         hexagon.setLocation(x, y);
 
+        /*
+        Decrease/increase the rotation step when Q and E are pressed.
+         */
         if (keyboard.keyDownOnce(KeyEvent.VK_Q)) {
             rotStep -= (float) Math.toRadians(0.5);
             if (rotStep < 0) {
@@ -118,6 +176,7 @@ public class State {
         if (keyboard.keyDownOnce(KeyEvent.VK_E)) {
             rotStep += (float) Math.toRadians(0.5);
         }
+        // Reverse the direction of rotation when SPACE is pressed.
         if (keyboard.keyDownOnce(KeyEvent.VK_SPACE)) {
             rotDir = -rotDir;
         }
@@ -127,6 +186,11 @@ public class State {
         hexagon.updateWorld();
     }
 
+    /**
+     * Updates the triangle vector object in response to mouse movement.
+     * The triangle is drawn at the current mouse location.
+     * @param mouse The mouse input listener.
+     */
     private void updateTriangle(MouseInput mouse) {
         Point pos = mouse.getPosition();
         Vector2f mouseVector = Matrix3x3f.identity()
