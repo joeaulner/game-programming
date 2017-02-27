@@ -44,9 +44,13 @@ public class SimpleFramework extends JFrame implements Runnable {
         getContentPane().add(canvas);
         setLocationByPlatform(true);
         if (appMaintainRatio) {
-            getContentPane().setBackground(appBackground);
+            getContentPane().setBackground(appBorder);
             setSize(appWidth, appHeight);
-            canvas.setSize(appWidth, appHeight);
+            // set initial canvas dimensions using border scale
+            // so viewport matrix is correct during initialization
+            int cW = (int) (appWidth * appBorderScale);
+            int cH = (int) (appHeight * appBorderScale);
+            canvas.setSize(cW, cH);
             setLayout(null);
             getContentPane().addComponentListener(new ComponentAdapter() {
                 @Override
@@ -71,11 +75,12 @@ public class SimpleFramework extends JFrame implements Runnable {
         setVisible(true);
         canvas.createBufferStrategy(2);
         bs = canvas.getBufferStrategy();
+        canvas.requestFocus();
         gameThread = new Thread(this);
         gameThread.start();
     }
 
-    protected void onComponentResized(ComponentEvent event) {
+    protected void onComponentResized(ComponentEvent e) {
         Dimension size = getContentPane().getSize();
         int vw = (int) (size.width * appBorderScale);
         int vh = (int) (size.height * appBorderScale);
@@ -83,10 +88,11 @@ public class SimpleFramework extends JFrame implements Runnable {
         int vy = (size.height - vh) / 2;
         int newW = vw;
         int newH = (int) (vw * appWorldHeight / appWorldWidth);
-        if (newW > vh) {
+        if (newH > vh) {
             newW = (int) (vh * appWorldWidth / appWorldHeight);
             newH = vh;
         }
+        // center
         vx += (vw - newW) / 2;
         vy += (vh - newH) / 2;
         canvas.setLocation(vx, vy);

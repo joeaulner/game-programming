@@ -44,9 +44,13 @@ public class SimpleFramework extends JFrame implements Runnable {
         getContentPane().add(canvas);
         setLocationByPlatform(true);
         if (appMaintainRatio) {
-            getContentPane().setBackground(appBackground);
+            getContentPane().setBackground(appBorder);
             setSize(appWidth, appHeight);
-            canvas.setSize(appWidth, appHeight);
+            // set initial canvas dimensions using border scale
+            // so viewport matrix is correct during initialization
+            int cW = (int) (appWidth * appBorderScale);
+            int cH = (int) (appHeight * appBorderScale);
+            canvas.setSize(cW, cH);
             setLayout(null);
             getContentPane().addComponentListener(new ComponentAdapter() {
                 @Override
@@ -71,6 +75,7 @@ public class SimpleFramework extends JFrame implements Runnable {
         setVisible(true);
         canvas.createBufferStrategy(2);
         bs = canvas.getBufferStrategy();
+        canvas.requestFocus();
         gameThread = new Thread(this);
         gameThread.start();
     }
