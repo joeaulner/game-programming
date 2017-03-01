@@ -14,13 +14,16 @@ public class CityManager {
 
     private CityManager() {
         cities = new ArrayList<>();
-        for (int x = -18; x <= 18; x += 4) {
-            spawnCity(x, -10, null);
-        }
     }
 
     public static CityManager getInstance() {
         return instance;
+    }
+
+    public void initialize() {
+        for (int x = -18; x <= 18; x += 4) {
+            spawnCity(x, -10, null);
+        }
     }
 
     public ArrayList<VectorObject> getCities() {

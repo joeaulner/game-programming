@@ -8,6 +8,7 @@ import cannonball.world.CityManager;
 import java.awt.*;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 
 public class CannonballCommand extends SimpleFramework {
 
@@ -55,6 +56,11 @@ public class CannonballCommand extends SimpleFramework {
         super.processInput(delta);
         if (keyboard.keyDownOnce(KeyEvent.VK_SPACE)) {
             gameOver = false;
+            cannonballManager.initialize();
+            cityManager.initialize();
+        }
+        if (mouse.buttonDownOnce(MouseEvent.BUTTON1)) {
+            cannonballManager.setClickPos(getWorldMousePosition());
         }
     }
 
@@ -70,9 +76,14 @@ public class CannonballCommand extends SimpleFramework {
         cityManager.update(viewport);
 
         int cityCount = cityManager.getCities().size();
-        score += 10 * delta * scoreMultiplier * cityCount;
         if (cityCount == 0) {
             gameOver = true;
+            cannonballManager.onGameOver();
+        }
+        scoreMultiplier = cityCount;
+        score += 10 * delta * scoreMultiplier;
+        if (cannonballManager.getCannonballDestroyed()) {
+            score += 50;
         }
     }
 
@@ -82,10 +93,18 @@ public class CannonballCommand extends SimpleFramework {
         float windVelocity = cannonballManager.getWindVelocity();
         String windDirection = windVelocity > 0 ? "East" : "West";
 
-        g.drawString(String.format("Wind direction: %s", windDirection), 20, 40);
-        g.drawString(String.format("Wind velocity: %.2f", Math.abs(windVelocity)), 20, 60);
-        g.drawString(String.format("Score Multiplier: x%.0f", scoreMultiplier), 20, 80);
-        g.drawString(String.format("Score: %.0f", score), 20, 100);
+        g.setColor(Color.BLACK);
+        if (gameOver && score == 0) {
+            g.drawString("Press [SPACE] to start.", 20, 40);
+        } else if (gameOver) {
+            g.drawString("Game Over!", 20, 40);
+            g.drawString(String.format("Final Score: %,.0f", score), 20, 60);
+        } else {
+            g.drawString(String.format("Wind direction: %s", windDirection), 20, 40);
+            g.drawString(String.format("Wind velocity: %.2f", Math.abs(windVelocity)), 20, 60);
+            g.drawString(String.format("Score Multiplier: x%.0f", scoreMultiplier), 20, 80);
+            g.drawString(String.format("Score: %,.0f", score), 20, 100);
+        }
 
         cannonballManager.render(g);
         cityManager.render(g);

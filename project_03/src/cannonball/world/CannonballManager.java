@@ -1,6 +1,7 @@
 package cannonball.world;
 
 import cannonball.util.Matrix3x3f;
+import cannonball.util.Vector2f;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -10,12 +11,16 @@ public class CannonballManager {
 
     private Random random;
     private ArrayList<VectorObject> cannonballs;
+    private Vector2f clickPos;
 
-    private float windVelocity = 0.0f;
-    private float windVelocityDelta = 0.1f;
+    private float windVelocity;
+    private float windVelocityDelta;
 
-    private float spawnRate = 3f;
-    private float timeSinceSpawn = 3f;
+    private float spawnRate;
+    private float timeSinceSpawn;
+
+    private boolean cannonballDestroyed;
+    private final float scale = 0.1f;
 
     private static CannonballManager instance = new CannonballManager();
 
@@ -28,6 +33,17 @@ public class CannonballManager {
         return instance;
     }
 
+    public void initialize() {
+        windVelocity = 0.0f;
+        windVelocityDelta = 0.3f;
+        spawnRate = timeSinceSpawn = 2.0f;
+        cannonballDestroyed = false;
+    }
+
+    public void onGameOver() {
+        cannonballs.clear();
+    }
+
     public ArrayList<VectorObject> getCannonballs() {
         return cannonballs;
     }
@@ -36,25 +52,44 @@ public class CannonballManager {
         return windVelocity;
     }
 
+    public void setClickPos(Vector2f clickPos) {
+        this.clickPos = clickPos;
+    }
+
+    public boolean getCannonballDestroyed() {
+        return cannonballDestroyed;
+    }
+
     public void update(float delta, Matrix3x3f viewport) {
-        ArrayList<VectorObject> objectsToRemove = new ArrayList<>();
+        ArrayList<VectorObject> toRemove = new ArrayList<>();
         float dX = windVelocity * delta;
         float dY = -4.0f * delta;
+        cannonballDestroyed = false;
 
         for (VectorObject cannonball : cannonballs) {
             Point.Float loc = cannonball.getLocation();
             float x = loc.x + dX;
             float y = loc.y + dY;
+            // remove cannonball if it passes through edges of game world
             if (y < -10 || Math.abs(x) > 20) {
-                objectsToRemove.add(cannonball);
+                toRemove.add(cannonball);
                 continue;
+            }
+            // remove game world if it was clicked
+            float radius = 5 * scale;
+            if (clickPos != null &&
+                    clickPos.x > x - radius && clickPos.x < x + radius &&
+                    clickPos.y > y - radius && clickPos.y < y + radius) {
+                toRemove.add(cannonball);
+                cannonballDestroyed = true;
             }
             cannonball.setLocation(x, y);
             cannonball.setViewport(viewport);
             cannonball.updateWorld();
         }
+        clickPos = null;
 
-        for (VectorObject objectToRemove : objectsToRemove) {
+        for (VectorObject objectToRemove : toRemove) {
             cannonballs.remove(objectToRemove);
         }
 
@@ -64,14 +99,14 @@ public class CannonballManager {
             spawnCannonball(x, 11, viewport);
             timeSinceSpawn = 0.0f;
         }
-        float dSpawnRate = -0.05f * delta;
-        spawnRate = Math.max(0.5f, spawnRate + dSpawnRate);
+        float dSpawnRate = -0.025f * delta;
+        spawnRate = Math.max(0.25f, spawnRate + dSpawnRate);
 
         float dWindVelocity = windVelocityDelta * delta;
         windVelocity += dWindVelocity;
-        if (windVelocity >= 2) {
+        if (windVelocity >= 2.5f) {
             windVelocityDelta = -Math.abs(windVelocityDelta);
-        } else if (windVelocity <= -2) {
+        } else if (windVelocity <= -2.5f) {
             windVelocityDelta = Math.abs(windVelocityDelta);
         }
     }
@@ -89,7 +124,7 @@ public class CannonballManager {
                 9
         );
         VectorObject cannonball = new VectorObject(cannonballShape, x, y, Color.BLACK, viewport);
-        cannonball.setScale(0.1f, 0.1f);
+        cannonball.setScale(scale, scale);
         cannonballs.add(cannonball);
     }
 }
