@@ -128,20 +128,12 @@ public class VectorObject implements Drawable {
 
     /**
      * Set the x and y scales of the object.
-     * @param scaleX The degree of scaling for the x-axis
-     * @param scaleY The degree of scaling for the y-axis
+     * @param scaleX The degree of scaling for the x-axis.
+     * @param scaleY The degree of scaling for the y-axis.
      */
     public void setScale(float scaleX, float scaleY) {
         this.scaleX = scaleX;
         this.scaleY = scaleY;
-    }
-
-    /**
-     * Set the x and y scales of the object to the same value.
-     * @param scale The degree of scaling for both axis
-     */
-    public void setScale(float scale) {
-        setScale(scale, scale);
     }
 
     /**
@@ -158,6 +150,14 @@ public class VectorObject implements Drawable {
      */
     public void setRotation(float rotation) {
         this.rotation = rotation;
+    }
+
+    /**
+     * Set the viewport used to scale/translate the viewport in relation to the window.
+     * @param viewport The new viewport matrix.
+     */
+    public void setViewport(Matrix3x3f viewport) {
+        this.viewport = viewport;
     }
 
     /**
