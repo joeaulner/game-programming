@@ -8,15 +8,20 @@ import java.util.Random;
 
 public class CannonballManager {
 
+    private Random random;
     private ArrayList<VectorObject> cannonballs;
-    private float spawnRate;
-    private float timeSinceSpawn;
+
+    private float windVelocity = 0.0f;
+    private float windVelocityDelta = 0.1f;
+
+    private float spawnRate = 3f;
+    private float timeSinceSpawn = 3f;
 
     private static CannonballManager instance = new CannonballManager();
 
     private CannonballManager() {
+        random = new Random();
         cannonballs = new ArrayList<>();
-        spawnRate = timeSinceSpawn = 0.5f;
     }
 
     public static CannonballManager getInstance() {
@@ -27,22 +32,47 @@ public class CannonballManager {
         return cannonballs;
     }
 
+    public float getWindVelocity() {
+        return windVelocity;
+    }
+
     public void update(float delta, Matrix3x3f viewport) {
-        float dX = -0.0f * delta;
-        float dY = -3.0f * delta;
+        ArrayList<VectorObject> objectsToRemove = new ArrayList<>();
+        float dX = windVelocity * delta;
+        float dY = -4.0f * delta;
+
         for (VectorObject cannonball : cannonballs) {
             Point.Float loc = cannonball.getLocation();
-            cannonball.setLocation(loc.x + dX, loc.y + dY);
+            float x = loc.x + dX;
+            float y = loc.y + dY;
+            if (y < -10 || Math.abs(x) > 20) {
+                objectsToRemove.add(cannonball);
+                continue;
+            }
+            cannonball.setLocation(x, y);
             cannonball.setViewport(viewport);
             cannonball.updateWorld();
         }
 
+        for (VectorObject objectToRemove : objectsToRemove) {
+            cannonballs.remove(objectToRemove);
+        }
+
         timeSinceSpawn += delta;
         if (timeSinceSpawn >= spawnRate) {
-            Random random = new Random();
-            int x = random.nextInt(31) - 15;
+            int x = random.nextInt(39) - 20;
             spawnCannonball(x, 11, viewport);
             timeSinceSpawn = 0.0f;
+        }
+        float dSpawnRate = -0.05f * delta;
+        spawnRate = Math.max(0.5f, spawnRate + dSpawnRate);
+
+        float dWindVelocity = windVelocityDelta * delta;
+        windVelocity += dWindVelocity;
+        if (windVelocity >= 2) {
+            windVelocityDelta = -Math.abs(windVelocityDelta);
+        } else if (windVelocity <= -2) {
+            windVelocityDelta = Math.abs(windVelocityDelta);
         }
     }
 

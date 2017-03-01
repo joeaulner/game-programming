@@ -15,6 +15,8 @@ public class CannonballCommand extends SimpleFramework {
     private CityManager cityManager;
     private Matrix3x3f viewport;
     private boolean gameOver;
+    private float score;
+    private float scoreMultiplier;
 
     public CannonballCommand() {
         appBackground = Color.WHITE;
@@ -30,6 +32,8 @@ public class CannonballCommand extends SimpleFramework {
         appWorldHeight = 20.0f;
 
         gameOver = true;
+        score = 0;
+        scoreMultiplier = 1;
     }
 
     @Override
@@ -64,11 +68,25 @@ public class CannonballCommand extends SimpleFramework {
         // onComponentResized to avoid having to set the viewport every game loop
         cannonballManager.update(delta, viewport);
         cityManager.update(viewport);
+
+        int cityCount = cityManager.getCities().size();
+        score += 10 * delta * scoreMultiplier * cityCount;
+        if (cityCount == 0) {
+            gameOver = true;
+        }
     }
 
     @Override
     protected void render(Graphics g) {
         super.render(g);
+        float windVelocity = cannonballManager.getWindVelocity();
+        String windDirection = windVelocity > 0 ? "East" : "West";
+
+        g.drawString(String.format("Wind direction: %s", windDirection), 20, 40);
+        g.drawString(String.format("Wind velocity: %.2f", Math.abs(windVelocity)), 20, 60);
+        g.drawString(String.format("Score Multiplier: x%.0f", scoreMultiplier), 20, 80);
+        g.drawString(String.format("Score: %.0f", score), 20, 100);
+
         cannonballManager.render(g);
         cityManager.render(g);
     }
