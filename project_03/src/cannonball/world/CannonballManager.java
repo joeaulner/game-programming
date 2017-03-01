@@ -12,19 +12,19 @@ public class CannonballManager {
     private float spawnRate;
     private float timeSinceSpawn;
 
-    public CannonballManager() {
+    private static CannonballManager instance = new CannonballManager();
+
+    private CannonballManager() {
         cannonballs = new ArrayList<>();
         spawnRate = timeSinceSpawn = 0.5f;
     }
 
-    public ArrayList<VectorObject> getCannonballs() {
-        return cannonballs;
+    public static CannonballManager getInstance() {
+        return instance;
     }
 
-    public void setViewport(Matrix3x3f viewport) {
-        for (VectorObject cannonball : cannonballs) {
-            cannonball.setViewport(viewport);
-        }
+    public ArrayList<VectorObject> getCannonballs() {
+        return cannonballs;
     }
 
     public void update(float delta, Matrix3x3f viewport) {
@@ -33,8 +33,6 @@ public class CannonballManager {
         for (VectorObject cannonball : cannonballs) {
             Point.Float loc = cannonball.getLocation();
             cannonball.setLocation(loc.x + dX, loc.y + dY);
-            // TODO: find out if viewport can be accurately set using just initialize &
-            // onComponentResized to avoid this extra step during the game loop
             cannonball.setViewport(viewport);
             cannonball.updateWorld();
         }
@@ -48,6 +46,12 @@ public class CannonballManager {
         }
     }
 
+    public void render(Graphics g) {
+        for (VectorObject cannonball : cannonballs) {
+            cannonball.render(g);
+        }
+    }
+
     private void spawnCannonball(float x, float y, Matrix3x3f viewport) {
         Shape cannonballShape = new Polygon(
                 new int[] { 2, -2, -5, -5, -2, 2, 5, 5, 2 },
@@ -57,11 +61,5 @@ public class CannonballManager {
         VectorObject cannonball = new VectorObject(cannonballShape, x, y, Color.BLACK, viewport);
         cannonball.setScale(0.1f, 0.1f);
         cannonballs.add(cannonball);
-    }
-
-    public void render(Graphics g) {
-        for (VectorObject cannonball : cannonballs) {
-            cannonball.render(g);
-        }
     }
 }

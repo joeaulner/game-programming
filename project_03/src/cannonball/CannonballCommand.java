@@ -1,7 +1,9 @@
 package cannonball;
 
+import cannonball.util.Matrix3x3f;
 import cannonball.util.SimpleFramework;
 import cannonball.world.CannonballManager;
+import cannonball.world.CityManager;
 
 import java.awt.*;
 import java.awt.event.ComponentEvent;
@@ -10,6 +12,8 @@ import java.awt.event.KeyEvent;
 public class CannonballCommand extends SimpleFramework {
 
     private CannonballManager cannonballManager;
+    private CityManager cityManager;
+    private Matrix3x3f viewport;
     private boolean gameOver;
 
     public CannonballCommand() {
@@ -25,19 +29,21 @@ public class CannonballCommand extends SimpleFramework {
         appWorldWidth = 40.0f;
         appWorldHeight = 20.0f;
 
-        cannonballManager = new CannonballManager();
         gameOver = true;
     }
 
     @Override
     protected void initialize() {
         super.initialize();
+        cannonballManager = CannonballManager.getInstance();
+        cityManager = CityManager.getInstance();
+        viewport = getViewportTransform();
     }
 
     @Override
     protected void onComponentResized(ComponentEvent e) {
         super.onComponentResized(e);
-        cannonballManager.setViewport(getViewportTransform());
+        viewport = getViewportTransform();
     }
 
     @Override
@@ -54,14 +60,17 @@ public class CannonballCommand extends SimpleFramework {
         if (gameOver) {
             return;
         }
-
-        cannonballManager.update(delta, getViewportTransform());
+        // TODO: find out if viewport can be accurately set using just initialize &
+        // onComponentResized to avoid having to set the viewport every game loop
+        cannonballManager.update(delta, viewport);
+        cityManager.update(viewport);
     }
 
     @Override
     protected void render(Graphics g) {
         super.render(g);
         cannonballManager.render(g);
+        cityManager.render(g);
     }
 
     @Override
