@@ -70,7 +70,7 @@ public class CannonballCommand extends SimpleFramework {
 
     /**
      * When the JFrame/Canvas are resized, get the new viewport transformation matrix.
-     * @param e The resize event (not used).
+     * @param e Unused.
      */
     @Override
     protected void onComponentResized(ComponentEvent e) {
@@ -193,7 +193,7 @@ public class CannonballCommand extends SimpleFramework {
 
     /**
      * Launches the game.
-     * @param args Not used.
+     * @param args Unused.
      */
     public static void main(String[] args) {
         launchApp(new CannonballCommand());

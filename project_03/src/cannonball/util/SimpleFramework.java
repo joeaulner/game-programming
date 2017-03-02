@@ -8,6 +8,11 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
 
+/**
+ * A simple framework for constructing a windowed game. It is intended to be
+ * extended by a new class to implement the game logic, but provides reasonable
+ * defaults for most properties.
+ */
 public class SimpleFramework extends JFrame implements Runnable {
 
     private BufferStrategy bs;
@@ -33,10 +38,17 @@ public class SimpleFramework extends JFrame implements Runnable {
     protected long appSleep = 10L;
     protected boolean appMaintainRatio = false;
 
+    /**
+     * Empty constructor.
+     */
     public SimpleFramework() {
 
     }
 
+    /**
+     * Creates a canvas on which the game will be drawn. Resizes the canvas based on
+     * the app height/width, the border scale, and whether the app ratio is to be maintained.
+     */
     protected void createAndShowGUI() {
         canvas = new Canvas();
         canvas.setBackground(appBackground);
@@ -64,14 +76,17 @@ public class SimpleFramework extends JFrame implements Runnable {
         }
         setTitle(appTitle);
 
+        // Register key event listener
         keyboard = new KeyboardInput();
         canvas.addKeyListener(keyboard);
 
+        // Register mouse event listeners
         mouse = new RelativeMouseInput(canvas);
         canvas.addMouseListener(mouse);
         canvas.addMouseMotionListener(mouse);
         canvas.addMouseWheelListener(mouse);
 
+        // Make the window visible, create the buffer strategy, request focus, and start the game thread
         setVisible(true);
         canvas.createBufferStrategy(2);
         bs = canvas.getBufferStrategy();
@@ -80,6 +95,11 @@ public class SimpleFramework extends JFrame implements Runnable {
         gameThread.start();
     }
 
+    /**
+     * When the component is resized and the app ratio is being maintained,
+     * calculate the new dimensions required to maintain the same canvas ratio.
+     * @param e Unused.
+     */
     protected void onComponentResized(ComponentEvent e) {
         Dimension size = getContentPane().getSize();
         int vw = (int) (size.width * appBorderScale);
@@ -99,20 +119,36 @@ public class SimpleFramework extends JFrame implements Runnable {
         canvas.setSize(newW, newH);
     }
 
+    /**
+     * Returns the transformation matrix for the viewport generated using the app and world dimensions.
+     * @return The transformation matrix.
+     */
     protected Matrix3x3f getViewportTransform() {
         return Utility.createViewport(appWorldWidth, appWorldHeight, canvas.getWidth(), canvas.getHeight());
     }
 
+    /**
+     * Returns the reverse transformation matrix for the viewport generated using the app and world dimensions.
+     * @return The reverse transformation matrix.
+     */
     protected Matrix3x3f getReverseViewportTransform() {
         return Utility.createReverseViewport(appWorldWidth, appWorldHeight, canvas.getWidth(), canvas.getHeight());
     }
 
+    /**
+     * Get the mouse position relative to the world coordinates.
+     * @return The mouse position.
+     */
     protected Vector2f getWorldMousePosition() {
         Matrix3x3f screenToWorld = getReverseViewportTransform();
         Point mousePos = mouse.getPosition();
         return screenToWorld.mul(new Vector2f(mousePos.x, mousePos.y));
     }
 
+    /**
+     * Get the mouse position relative to the application.
+     * @return The mouse position.
+     */
     protected Vector2f getRelativeWorldMousePosition() {
         float sx = appWorldWidth / (canvas.getWidth() - 1);
         float sy = appWorldHeight / (canvas.getHeight() - 1);
@@ -122,6 +158,10 @@ public class SimpleFramework extends JFrame implements Runnable {
                 .mul(new Vector2f(p.x, p.y));
     }
 
+    /**
+     * Initialize the application and start the game loop,
+     * calculating time delta with each iteration.
+     */
     public void run() {
         running = true;
         initialize();
@@ -137,14 +177,25 @@ public class SimpleFramework extends JFrame implements Runnable {
         terminate();
     }
 
+    /**
+     * Initialize the frameRate object used during development.
+     */
     protected void initialize() {
         frameRate = new FrameRate();
     }
 
+    /**
+     * Empty method that can be overridden for any cleanup on app close.
+     */
     protected void terminate() {
 
     }
 
+    /**
+     * Execute one iteration of the game loop, processing input, updating
+     * the game objects, rendering the frame, and sleeping the thread.
+     * @param delta
+     */
     private void gameLoop(float delta) {
         processInput(delta);
         updateObjects(delta);
@@ -152,6 +203,12 @@ public class SimpleFramework extends JFrame implements Runnable {
         sleep(appSleep);
     }
 
+    /**
+     * Render the frame by getting the graphics object used by the buffer strategy,
+     * clearing the image, and calling the render method to draw the game image.
+     * Instabilities with the buffer strategy are taken into account using
+     * do/while loops.
+     */
     private void renderFrame() {
         do {
             do {
@@ -170,6 +227,10 @@ public class SimpleFramework extends JFrame implements Runnable {
         } while (bs.contentsLost());
     }
 
+    /**
+     * Sleep the main app thread a specified amount of time (ns).
+     * @param appSleep The length of time to sleep the thread.
+     */
     private void sleep(long appSleep) {
         try {
             Thread.sleep(appSleep);
@@ -178,15 +239,29 @@ public class SimpleFramework extends JFrame implements Runnable {
         }
     }
 
+    /**
+     * Poll keyboard and mouse input.
+     * @param delta Unused.
+     */
     protected void processInput(float delta) {
         keyboard.poll();
         mouse.poll();
     }
 
+    /**
+     * Empty method intended to be overridden to provide a place
+     * to update game objects.
+     * @param delta Unused.
+     */
     protected void updateObjects(float delta) {
 
     }
 
+    /**
+     * Render the current frame using the provided Graphics object.
+     * Displays the calculated frames per second.
+     * @param g The Graphics object used to render.
+     */
     protected void render(Graphics g) {
         g.setFont(appFont);
         g.setColor(appFPSColor);
@@ -194,6 +269,10 @@ public class SimpleFramework extends JFrame implements Runnable {
         g.drawString(frameRate.getFrameRate(), 20, 20);
     }
 
+    /**
+     * When the application is being closed, end the game loop by
+     * setting running to false, then join the thread.
+     */
     protected void onWindowClosing() {
         try {
             running = false;
@@ -204,6 +283,11 @@ public class SimpleFramework extends JFrame implements Runnable {
         System.exit(0);
     }
 
+    /**
+     * Launch the application by registering the windowClosing event
+     * and asynchronously invoking the createAndShowGUI method.
+     * @param app
+     */
     protected static void launchApp(final SimpleFramework app) {
         app.addWindowListener(new WindowAdapter() {
             @Override
