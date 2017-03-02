@@ -24,15 +24,17 @@ public class VectorObject implements Drawable {
     private float rotation = 0;
 
     /**
-     * Internal constructor that initializes location and color.
+     * Internal constructor that initializes location, color, an empty
+     * worldVectors list, and a default viewport set to the identity matrix.
      * @param x The object's x-coordinate.
      * @param y The object's y-coordinate.
-     * @param color The objects color.
+     * @param color The object's color.
      */
     private VectorObject(float x, float y, Color color) {
         this.location = new Point.Float(x, y);
         this.color = color;
         worldVectors = new ArrayList<>();
+        viewport = Matrix3x3f.identity();
     }
 
     /**
@@ -41,7 +43,7 @@ public class VectorObject implements Drawable {
      * @param vectors An ArrayList of vectors to store internally.
      * @param x The object's x-coordinate.
      * @param y The object's y-coordinate.
-     * @param color The objects color.
+     * @param color The object's color.
      */
     public VectorObject(ArrayList<Vector2f> vectors, float x, float y, Color color) {
         this(x, y, color);
@@ -53,7 +55,7 @@ public class VectorObject implements Drawable {
      * @param vectors An array of vectors.
      * @param x The object's x-coordinate.
      * @param y The object's y-coordinate.
-     * @param color The objects color.
+     * @param color The object's color.
      */
     public VectorObject(Vector2f[] vectors, float x, float y, Color color) {
         this(new ArrayList<>(Arrays.asList(vectors)), x, y, color);
@@ -65,7 +67,7 @@ public class VectorObject implements Drawable {
      * @param shape A shape whose PathIterator will be used to construct the vectors ArrayList.
      * @param x The object's x-coordinate.
      * @param y The object's y-coordinate.
-     * @param color The objects color.
+     * @param color The object's color.
      */
     public VectorObject(Shape shape, float x, float y, Color color) {
         this(x, y, color);
