@@ -53,7 +53,7 @@ public class CannonballCommand extends SimpleFramework {
                 new Vector2f(0, 0),
                 new Vector2f(0, 1),
                 new Vector2f(0, -1)
-        }, 0, 0, Color.RED, viewport);
+        }, 0, 0, Color.RED);
         cursor.setScale(0.5f, 0.5f);
     }
 

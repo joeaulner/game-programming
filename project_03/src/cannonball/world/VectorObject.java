@@ -29,10 +29,9 @@ public class VectorObject implements Drawable {
      * @param y The object's y-coordinate.
      * @param color The objects color.
      */
-    private VectorObject(float x, float y, Color color, Matrix3x3f viewport) {
+    private VectorObject(float x, float y, Color color) {
         this.location = new Point.Float(x, y);
         this.color = color;
-        this.viewport = viewport;
         worldVectors = new ArrayList<>();
     }
 
@@ -44,8 +43,8 @@ public class VectorObject implements Drawable {
      * @param y The object's y-coordinate.
      * @param color The objects color.
      */
-    public VectorObject(ArrayList<Vector2f> vectors, float x, float y, Color color, Matrix3x3f viewport) {
-        this(x, y, color, viewport);
+    public VectorObject(ArrayList<Vector2f> vectors, float x, float y, Color color) {
+        this(x, y, color);
         this.vectors = vectors;
     }
 
@@ -56,8 +55,8 @@ public class VectorObject implements Drawable {
      * @param y The object's y-coordinate.
      * @param color The objects color.
      */
-    public VectorObject(Vector2f[] vectors, float x, float y, Color color, Matrix3x3f viewport) {
-        this(new ArrayList<>(Arrays.asList(vectors)), x, y, color, viewport);
+    public VectorObject(Vector2f[] vectors, float x, float y, Color color) {
+        this(new ArrayList<>(Arrays.asList(vectors)), x, y, color);
     }
 
     /**
@@ -68,8 +67,8 @@ public class VectorObject implements Drawable {
      * @param y The object's y-coordinate.
      * @param color The objects color.
      */
-    public VectorObject(Shape shape, float x, float y, Color color, Matrix3x3f viewport) {
-        this(x, y, color, viewport);
+    public VectorObject(Shape shape, float x, float y, Color color) {
+        this(x, y, color);
         this.vectors = new ArrayList<>();
 
         PathIterator path = shape.getPathIterator(null);

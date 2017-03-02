@@ -9,8 +9,8 @@ public class Cannonball extends VectorObject {
 
     private Vector2f velocity;
 
-    public Cannonball(Shape shape, float x, float y, Color color, Matrix3x3f viewport, Vector2f velocity) {
-        super(shape, x, y, color, viewport);
+    public Cannonball(Shape shape, float x, float y, Color color, Vector2f velocity) {
+        super(shape, x, y, color);
         this.velocity = velocity;
     }
 

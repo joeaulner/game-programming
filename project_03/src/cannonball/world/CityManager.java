@@ -67,7 +67,7 @@ public class CityManager {
                 new int[] { 0, 3, 2, 3, 2, 3, 2, 4, 4, 0, 0 },
                 11
         );
-        VectorObject city = new VectorObject(cityShape, x, y, Color.BLUE, viewport);
+        VectorObject city = new VectorObject(cityShape, x, y, Color.BLUE);
         city.setScale(scale, scale);
         cities.add(city);
     }
