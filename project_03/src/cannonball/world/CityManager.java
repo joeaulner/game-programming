@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class CityManager {
 
     private ArrayList<VectorObject> cities;
-    private final float scale = 2.0f;
+    private final float scale = 0.5f;
 
     private static CityManager instance = new CityManager();
 
@@ -31,8 +31,9 @@ public class CityManager {
     }
 
     public void update(Matrix3x3f viewport) {
-        ArrayList<VectorObject> cannonballs = CannonballManager.getInstance().getCannonballs();
+        ArrayList<Cannonball> cannonballs = CannonballManager.getInstance().getCannonballs();
         ArrayList<VectorObject> destroyedObjects = new ArrayList<>();
+        final int rad = 4;
 
         for (VectorObject city : cities) {
             city.setViewport(viewport);
@@ -41,7 +42,7 @@ public class CityManager {
             Point.Float cityLoc = city.getLocation();
             for (VectorObject cannonball : cannonballs) {
                 Point.Float ballLoc = cannonball.getLocation();
-                if (ballLoc.x > (cityLoc.x - scale) && ballLoc.x < (cityLoc.x + scale) && ballLoc.y <= (-10 + scale)) {
+                if (Math.abs(cityLoc.x - ballLoc.x) < (rad * scale) && ballLoc.y <= (-10.5 + rad * scale)) {
                     destroyedObjects.add(city);
                     destroyedObjects.add(cannonball);
                 }
@@ -62,9 +63,9 @@ public class CityManager {
 
     private void spawnCity(int x, int y, Matrix3x3f viewport) {
         Shape cityShape = new Polygon(
-                new int[] { -1, -1, 1, 1, -1 },
-                new int[] { 0, 1, 1, 0, 0 },
-                5
+                new int[] { -4, -4, -2, -2, 0, 0, 2, 2, 4, 4, -4 },
+                new int[] { 0, 3, 2, 3, 2, 3, 2, 4, 4, 0, 0 },
+                11
         );
         VectorObject city = new VectorObject(cityShape, x, y, Color.BLUE, viewport);
         city.setScale(scale, scale);

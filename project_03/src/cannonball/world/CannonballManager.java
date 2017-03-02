@@ -10,7 +10,7 @@ import java.util.Random;
 public class CannonballManager {
 
     private Random random;
-    private ArrayList<VectorObject> cannonballs;
+    private ArrayList<Cannonball> cannonballs;
     private Vector2f clickPos;
 
     private float windVelocity;
@@ -44,7 +44,7 @@ public class CannonballManager {
         cannonballs.clear();
     }
 
-    public ArrayList<VectorObject> getCannonballs() {
+    public ArrayList<Cannonball> getCannonballs() {
         return cannonballs;
     }
 
@@ -75,7 +75,7 @@ public class CannonballManager {
                 toRemove.add(cannonball);
                 continue;
             }
-            // remove game world if it was clicked
+            // remove cannonball if it was clicked
             float radius = 5 * scale;
             if (clickPos != null &&
                     clickPos.x > x - radius && clickPos.x < x + radius &&
@@ -104,9 +104,9 @@ public class CannonballManager {
 
         float dWindVelocity = windVelocityDelta * delta;
         windVelocity += dWindVelocity;
-        if (windVelocity >= 2.5f) {
+        if (windVelocity >= 3.0f) {
             windVelocityDelta = -Math.abs(windVelocityDelta);
-        } else if (windVelocity <= -2.5f) {
+        } else if (windVelocity <= -3.0f) {
             windVelocityDelta = Math.abs(windVelocityDelta);
         }
     }
@@ -123,7 +123,7 @@ public class CannonballManager {
                 new int[] { -5, -5, -2, 2, 5, 5, 2, -2, -5 },
                 9
         );
-        VectorObject cannonball = new VectorObject(cannonballShape, x, y, Color.BLACK, viewport);
+        Cannonball cannonball = new Cannonball(cannonballShape, x, y, Color.BLACK, viewport, null);
         cannonball.setScale(scale, scale);
         cannonballs.add(cannonball);
     }
