@@ -76,6 +76,10 @@ public class Vector2f {
         return div(len());
     }
 
+    public float dot(Vector2f v) {
+        return x * v.x + y * v.y;
+    }
+
     public float len() {
         return (float) Math.sqrt(x * x + y * y);
     }

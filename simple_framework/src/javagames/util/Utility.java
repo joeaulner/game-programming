@@ -1,5 +1,8 @@
 package javagames.util;
 
+import java.awt.*;
+import java.util.List;
+
 public class Utility {
 
     public static Matrix3x3f createViewport(
@@ -26,5 +29,21 @@ public class Utility {
         return Matrix3x3f.identity()
                 .mul(Matrix3x3f.translate(-tx, -ty))
                 .mul(Matrix3x3f.scale(sx, -sy));
+    }
+
+    public static void drawPolygon(Graphics g, Vector2f[] polygon) {
+        Vector2f start = polygon[polygon.length - 1];
+        for (Vector2f end : polygon) {
+            g.drawLine((int) start.x, (int) start.y, (int) end.x, (int) end.y);
+            start = end;
+        }
+    }
+
+    public static void drawPolygon(Graphics g, List<Vector2f> polygon) {
+        Vector2f start = polygon.get(polygon.size() - 1);
+        for (Vector2f end : polygon) {
+            g.drawLine((int) start.x, (int) start.y, (int) end.x, (int) end.y);
+            start = end;
+        }
     }
 }
