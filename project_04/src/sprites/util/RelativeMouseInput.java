@@ -1,12 +1,14 @@
-package javagames.util;
+package sprites.util;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class SimpleMouseInput
+public class RelativeMouseInput
         implements MouseListener, MouseMotionListener, MouseWheelListener {
 
     private static final int BUTTON_COUNT = 3;
+
     private Point mousePos;
     private Point currentPos;
     private boolean[] mouse;
@@ -14,7 +16,19 @@ public class SimpleMouseInput
     private int notches;
     private int polledNotches;
 
-    public SimpleMouseInput() {
+    private int dx, dy;
+    private Robot robot;
+    private Component component;
+    private boolean relative;
+
+    public RelativeMouseInput(Component component) {
+        this.component = component;
+        try {
+            robot = new Robot();
+        } catch(Exception ex) {
+            // handle exception (game specific)
+            ex.printStackTrace();
+        }
         mousePos = new Point(0, 0);
         currentPos = new Point(0, 0);
         mouse = new boolean[BUTTON_COUNT];
@@ -22,7 +36,13 @@ public class SimpleMouseInput
     }
 
     public synchronized void poll() {
-        mousePos = new Point(currentPos);
+        if (isRelative()) {
+            mousePos = new Point(dx, dy);
+        } else {
+            mousePos = new Point(currentPos);
+        }
+        dx = dy = 0;
+
         polledNotches = notches;
         notches = 0;
 
@@ -32,6 +52,17 @@ public class SimpleMouseInput
             } else {
                 polled[i] = 0;
             }
+        }
+    }
+
+    public boolean isRelative() {
+        return relative;
+    }
+
+    public void setRelative(boolean relative) {
+        this.relative = relative;
+        if (relative) {
+            centerMouse();
         }
     }
 
@@ -82,10 +113,32 @@ public class SimpleMouseInput
     }
 
     public synchronized void mouseMoved(MouseEvent e) {
-        currentPos = e.getPoint();
+        if (isRelative()) {
+            Point p = e.getPoint();
+            Point center = getComponentCenter();
+            dx += p.x - center.x;
+            dy += p.y - center.y;
+            centerMouse();
+        } else {
+            currentPos = e.getPoint();
+        }
     }
 
     public synchronized void mouseWheelMoved(MouseWheelEvent e) {
         notches += e.getWheelRotation();
+    }
+
+    private Point getComponentCenter() {
+        int w = component.getWidth();
+        int h = component.getHeight();
+        return new Point(w / 2, h / 2);
+    }
+
+    private void centerMouse() {
+        if (robot != null && component.isShowing()) {
+            Point center = getComponentCenter();
+            SwingUtilities.convertPointToScreen(center, component);
+            robot.mouseMove(center.x, center.y);
+        }
     }
 }
