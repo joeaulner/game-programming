@@ -161,6 +161,19 @@ public class VectorObject implements Drawable {
         this.viewport = viewport;
     }
 
+    public Vector2f[] getVectors() {
+        Vector2f[] vectorArr = new Vector2f[vectors.size()];
+        Matrix3x3f worldMatrix = Matrix3x3f.identity()
+                .mul(Matrix3x3f.rotate(rotation))
+                .mul(Matrix3x3f.scale(scaleX, scaleY))
+                // translate the object to its location in relation to the origin
+                .mul(Matrix3x3f.translate(location.x, location.y));
+        for (int i = 0; i < vectorArr.length; ++i) {
+            vectorArr[i] = worldMatrix.mul(vectors.get(i));
+        }
+        return vectorArr;
+    }
+
     /**
      * Constructs a world matrix and applies it to each vector.
      */
