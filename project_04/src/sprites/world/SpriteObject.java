@@ -15,18 +15,18 @@ public class SpriteObject implements Drawable {
 
     private Matrix3x3f viewport;
 
-    private float spriteScale;
     private BufferedImage sprite;
     private Vector2f location;
     private Vector2f worldLocation;
+    private float scaleX = 1;
+    private float scaleY = 1;
 
     public VectorObject boundingBox;
     public float width;
     public float height;
 
-    public SpriteObject(String filename, float spriteScale, float x, float y, float width, float height) {
+    public SpriteObject(String filename, float x, float y, float width, float height) {
         loadSprite(filename);
-        this.spriteScale = spriteScale;
         location = new Vector2f(x, y);
         this.width = width;
         this.height = height;
@@ -47,6 +47,11 @@ public class SpriteObject implements Drawable {
     public void setLocation(Vector2f location) {
         this.location = location;
         boundingBox.setLocation(location);
+    }
+
+    public void setScale(float scaleX, float scaleY) {
+        this.scaleX = scaleX;
+        this.scaleY = scaleY;
     }
 
     public void setViewport(Matrix3x3f viewport) {
@@ -101,8 +106,8 @@ public class SpriteObject implements Drawable {
 
     private BufferedImage scaleWithGraphics() {
         BufferedImage image = new BufferedImage(
-                (int) (sprite.getWidth() * spriteScale),
-                (int) (sprite.getHeight() * spriteScale),
+                (int) Math.abs(sprite.getWidth() * scaleX),
+                (int) Math.abs(sprite.getHeight() * scaleY),
                 BufferedImage.TYPE_INT_ARGB
         );
         Graphics2D g2d = image.createGraphics();
@@ -110,8 +115,22 @@ public class SpriteObject implements Drawable {
                 RenderingHints.KEY_INTERPOLATION,
                 RenderingHints.VALUE_INTERPOLATION_BILINEAR
         );
+        float sX = Math.signum(scaleX);
+        float sY = Math.signum(scaleY);
+        float tX = 0;
+        float tY = 0;
+        if (sX < 0) {
+            tX = image.getWidth() - 1;
+        }
+        if (sY < 0) {
+            tY = image.getHeight() - 1;
+        }
+        g2d.translate(tX, tY);
+        g2d.scale(sX, sY);
         g2d.drawImage(sprite, 0, 0, image.getWidth(), image.getHeight(), null);
+
         g2d.dispose();
+
         return image;
     }
 }

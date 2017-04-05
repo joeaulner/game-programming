@@ -43,7 +43,8 @@ public class TileManager {
                 filename += "3.png";
                 break;
         }
-        SpriteObject sprite = new SpriteObject(filename, 0.5f, x, y, 0.2f, 0.2f);
+        SpriteObject sprite = new SpriteObject(filename, x, y, 0.2f, 0.2f);
+        sprite.setScale(0.5f, 0.5f);
         tiles.add(sprite);
     }
 

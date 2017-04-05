@@ -13,7 +13,7 @@ public class Sprites extends SimpleFramework {
     private SantaManager santaManager;
 
     private boolean renderBoundingBoxes = true;
-    private float gravity = -0.0125f;
+    private float gravity = -0.033f;
 
     public Sprites() {
         appWidth = 1280;
@@ -28,21 +28,28 @@ public class Sprites extends SimpleFramework {
     protected void initialize() {
         super.initialize();
 
+        renderBoundingBoxes = true;
+
         tileManager = TileManager.getInstance();
         tileManager.setRenderBoundingBoxes(renderBoundingBoxes);
 
         santaManager = SantaManager.getInstance();
         santaManager.setRenderBoundingBoxes(renderBoundingBoxes);
+        santaManager.initialize();
     }
 
     @Override
     protected void processInput(float delta) {
         super.processInput(delta);
+        if (keyboard.keyDownOnce(KeyEvent.VK_SPACE)) {
+            initialize();
+        }
         if (keyboard.keyDownOnce(KeyEvent.VK_B)) {
             renderBoundingBoxes = !renderBoundingBoxes;
             tileManager.setRenderBoundingBoxes(renderBoundingBoxes);
             santaManager.setRenderBoundingBoxes(renderBoundingBoxes);
         }
+        santaManager.processInput(keyboard, delta);
     }
 
     @Override
