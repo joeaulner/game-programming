@@ -188,7 +188,7 @@ public class VectorObject implements Drawable {
     public void render(Graphics g) {
         g.setColor(color);
 
-        Vector2f start = null;
+        Vector2f start = worldVectors.get(worldVectors.size() - 1);
         for (Vector2f end : worldVectors) {
             if (start == null) {
                 start = end;

@@ -4,7 +4,7 @@ import java.awt.*;
 
 /**
  * Represents an entity as part of the game state
- * that can update its internal state and render itself.
+ * that can cycleImage its internal state and render itself.
  */
 public interface Drawable {
     /**

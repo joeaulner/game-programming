@@ -1,13 +1,19 @@
 package sprites;
 
 import sprites.util.SimpleFramework;
-import sprites.world.SpriteObject;
+import sprites.world.*;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
+
 
 public class Sprites extends SimpleFramework {
 
-    SpriteObject spriteObject;
+    private TileManager tileManager;
+    private SantaManager santaManager;
+
+    private boolean renderBoundingBoxes = true;
+    private float gravity = -0.0125f;
 
     public Sprites() {
         appWidth = 1280;
@@ -21,15 +27,36 @@ public class Sprites extends SimpleFramework {
     @Override
     protected void initialize() {
         super.initialize();
-        spriteObject = new SpriteObject("assets/tiles/1.png", 0, 0);
+
+        tileManager = TileManager.getInstance();
+        tileManager.setRenderBoundingBoxes(renderBoundingBoxes);
+
+        santaManager = SantaManager.getInstance();
+        santaManager.setRenderBoundingBoxes(renderBoundingBoxes);
+    }
+
+    @Override
+    protected void processInput(float delta) {
+        super.processInput(delta);
+        if (keyboard.keyDownOnce(KeyEvent.VK_B)) {
+            renderBoundingBoxes = !renderBoundingBoxes;
+            tileManager.setRenderBoundingBoxes(renderBoundingBoxes);
+            santaManager.setRenderBoundingBoxes(renderBoundingBoxes);
+        }
+    }
+
+    @Override
+    protected void updateObjects(float delta) {
+        super.updateObjects(delta);
+        tileManager.update(getViewportTransform());
+        santaManager.update(gravity, getViewportTransform(), delta);
     }
 
     @Override
     protected void render(Graphics g) {
         super.render(g);
-        spriteObject.setViewport(getViewportTransform());
-        spriteObject.updateWorld();
-        spriteObject.render(g);
+        tileManager.render(g);
+        santaManager.render(g);
     }
 
     public static void main(String[] args) {
