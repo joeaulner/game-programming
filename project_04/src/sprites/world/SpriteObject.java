@@ -39,7 +39,7 @@ public class SpriteObject implements Drawable {
         return location;
     }
 
-    public void setlocation(float x, float y) {
+    public void setLocation(float x, float y) {
         location = new Vector2f(x, y);
         boundingBox.setLocation(location);
     }

@@ -1,5 +1,6 @@
 package sprites;
 
+import sprites.util.Matrix3x3f;
 import sprites.util.SimpleFramework;
 import sprites.world.*;
 
@@ -10,10 +11,11 @@ import java.awt.event.KeyEvent;
 public class Sprites extends SimpleFramework {
 
     private TileManager tileManager;
-    private SantaManager santaManager;
+    private HeroManager heroManager;
+    private EnemyManager enemyManager;
 
     private boolean renderBoundingBoxes = true;
-    private float gravity = -0.033f;
+    private float gravity = -0.04f;
 
     public Sprites() {
         appWidth = 1280;
@@ -22,20 +24,26 @@ public class Sprites extends SimpleFramework {
         appWorldWidth = 4;
         appWorldHeight = 2;
         appMaintainRatio = true;
+        appFPSColor = Color.BLACK;
+        appBackground = Color.LIGHT_GRAY;
     }
 
     @Override
     protected void initialize() {
         super.initialize();
 
-        renderBoundingBoxes = true;
+        renderBoundingBoxes = false;
 
         tileManager = TileManager.getInstance();
         tileManager.setRenderBoundingBoxes(renderBoundingBoxes);
 
-        santaManager = SantaManager.getInstance();
-        santaManager.setRenderBoundingBoxes(renderBoundingBoxes);
-        santaManager.initialize();
+        heroManager = HeroManager.getInstance();
+        heroManager.setRenderBoundingBoxes(renderBoundingBoxes);
+        heroManager.initialize();
+
+        enemyManager = EnemyManager.getInstance();
+        enemyManager.setRenderBoundingBoxes(renderBoundingBoxes);
+        enemyManager.initialize();
     }
 
     @Override
@@ -47,23 +55,35 @@ public class Sprites extends SimpleFramework {
         if (keyboard.keyDownOnce(KeyEvent.VK_B)) {
             renderBoundingBoxes = !renderBoundingBoxes;
             tileManager.setRenderBoundingBoxes(renderBoundingBoxes);
-            santaManager.setRenderBoundingBoxes(renderBoundingBoxes);
+            heroManager.setRenderBoundingBoxes(renderBoundingBoxes);
+            enemyManager.setRenderBoundingBoxes(renderBoundingBoxes);
         }
-        santaManager.processInput(keyboard, delta);
+        heroManager.processInput(keyboard, delta);
     }
 
     @Override
     protected void updateObjects(float delta) {
         super.updateObjects(delta);
-        tileManager.update(getViewportTransform());
-        santaManager.update(gravity, getViewportTransform(), delta);
+        Matrix3x3f viewport = getViewportTransform();
+        tileManager.update(viewport);
+        heroManager.update(gravity, viewport, delta);
+        enemyManager.update(viewport, delta);
     }
 
     @Override
     protected void render(Graphics g) {
-        super.render(g);
+        g.setFont(appFont);
+        g.setColor(appFPSColor);
+        frameRate.calculate();
+        g.drawString(frameRate.getFrameRate(), 35, 20);
+        g.drawString("Press [LEFT] and [RIGHT] to move", 35, 35);
+        g.drawString("Press [UP] to jump", 35, 50);
+        g.drawString("Press [SPACE] to reset", 35, 65);
+        g.drawString("Press [B] to toggle bounding boxes", 35, 80);
+
         tileManager.render(g);
-        santaManager.render(g);
+        heroManager.render(g);
+        enemyManager.render(g);
     }
 
     public static void main(String[] args) {
